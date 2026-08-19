@@ -1,0 +1,8 @@
+{
+  // golang.go:官方 Go 扩展(语法、调试、go tool 集成)
+  // formulahendry.code-runner:一键运行单文件 demo(.go / .ts)
+  "recommendations": [
+    "golang.go",
+    "formulahendry.code-runner"
+  ]
+}

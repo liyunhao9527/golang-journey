@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 2 课:变量与类型 —— 声明、推断与零值</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+
+<header class="lesson-header">
+  <p class="kicker">Lesson 02 · 语法基础</p>
+  <h1>变量与类型:从 let/const 到 var/:=</h1>
+  <p class="meta">预计 15 分钟 · 对照基线:TypeScript · 主源:<a href="https://go.dev/tour/basics/8">A Tour of Go — Variables</a></p>
+</header>
+
+<div class="goal">
+  <strong>本课胜利:</strong>能用三种方式声明变量,能脱口说出任意类型的零值——并亲手触发一次"未使用变量"的编译错误,理解 Go 对歧义的零容忍。
+</div>
+
+<h2>声明三兄弟:var / := / const</h2>
+
+<p>Go 的变量声明有四种写法,前三兄弟对应 TS 的 <code>let</code>/<code>const</code>:</p>
+
+<table>
+  <tr><th>Go</th><th>含义</th><th>TS 对照</th></tr>
+  <tr>
+    <td><code>var x string = "a"</code></td>
+    <td>声明并显式标注类型</td>
+    <td><code>let x: string = "a"</code></td>
+  </tr>
+  <tr>
+    <td><code>var x = "a"</code></td>
+    <td>声明,类型由编译器推断</td>
+    <td><code>let x = "a"</code></td>
+  </tr>
+  <tr>
+    <td><code>x := "a"</code></td>
+    <td><strong>短声明</strong>:声明 + 推断,函数内最常用</td>
+    <td>TS 没有等价写法;记住"<code>:=</code> = <code>let</code> + 推断"</td>
+  </tr>
+  <tr>
+    <td><code>const x = "a"</code></td>
+    <td>编译期常量,不可重新赋值</td>
+    <td><code>const x = "a"</code></td>
+  </tr>
+</table>
+
+<p>三条铁律,和 TS 的直觉不太一样:</p>
+
+<ul>
+  <li><strong><code>:=</code> 只能用在函数内部。</strong>包级(顶层)只能写 <code>var</code> 或 <code>const</code>。</li>
+  <li><strong>类型一旦确定,终身不变:</strong><code>x := 1</code> 之后写 <code>x = "a"</code> 会编译报错。TS 的 <code>let x = 1</code> 也是这个行为,但 Go 没有 <code>any</code> 兜底——除非你显式声明。</li>
+  <li><strong>未使用的局部变量是编译错误</strong>(未使用的 import 同理)。TS 里这只是 ESLint 的一条 warning,Go 直接拒绝编译。</li>
+</ul>
+
+<blockquote>
+  <p><strong>为什么?</strong>Go 的设计哲学是"零歧义、零容忍":没用的代码就是 bug 的温床。第一次被 <code>declared and not used: x</code> 卡住时别慌——删掉那行就好了。</p>
+</blockquote>
+
+<h2>零值:没有 undefined 的世界</h2>
+
+<p>TS 里声明不初始化,得到 <code>undefined</code>;Go 里声明不初始化,得到该类型的<strong>零值</strong>——每个类型都有自己固定的"默认值":</p>
+
+<table>
+  <tr><th>类型</th><th>零值</th><th>TS 对照</th></tr>
+  <tr><td><code>string</code></td><td><code>""</code></td><td><code>undefined</code></td></tr>
+  <tr><td><code>int</code> / <code>float64</code></td><td><code>0</code> / <code>0.0</code></td><td><code>undefined</code>(JS 里是 <code>NaN</code>/<code>undefined</code> 混杂)</td></tr>
+  <tr><td><code>bool</code></td><td><code>false</code></td><td><code>undefined</code></td></tr>
+  <tr><td>引用类型(slice/map/指针等)</td><td><code>nil</code>(第 4 课展开)</td><td><code>null</code></td></tr>
+</table>
+
+<p>这意味着 Go 代码里<strong>不存在</strong>"用了未初始化的变量"这种运行时错误——每个变量从出生起就有一个合法值。这也是为什么 Go 程序里 <code>undefined</code> 这个词根本不出现。</p>
+
+<blockquote>
+  <p><strong>关键差异:</strong>TS 的 <code>let s: string</code> 之后读 <code>s</code>,严格模式下编译报错、运行时是 <code>undefined</code>;Go 的 <code>var s string</code> 之后读 <code>s</code>,安全地得到 <code>""</code>。代价是:Go 里你永远无法区分"没赋值"和"赋值成了空字符串"——Go 认为这个区分不值得(需要的话可以用指针,第 5 课讲)。</p>
+</blockquote>
+
+<h2>基础类型:一张表对照完</h2>
+
+<table>
+  <tr><th>Go</th><th>TS</th><th>说明</th></tr>
+  <tr><td><code>string</code></td><td><code>string</code></td><td>唯一不同的:单引号 <code>'a'</code> 是 rune,不是字符串!</td></tr>
+  <tr><td><code>bool</code></td><td><code>boolean</code></td><td></td></tr>
+  <tr><td><code>int</code>, <code>int8</code>…<code>int64</code>, <code>uint</code>…</td><td><code>number</code></td><td>JS 的 number 只有一个(浮点);Go 显式区分位数和符号,<code>int</code> = 平台原生字长</td></tr>
+  <tr><td><code>float64</code>, <code>float32</code></td><td><code>number</code></td><td><code>float64</code> 是默认,和 JS number 精度一致</td></tr>
+  <tr><td><code>byte</code> = <code>uint8</code></td><td><code>number</code>(字节)</td><td>处理二进制数据时的最小单位</td></tr>
+  <tr><td><code>rune</code> = <code>int32</code></td><td>—</td><td>Unicode 码点。前端最常踩的坑:<code>'a'</code> 的类型是 <code>rune</code>,不是字符串</td></tr>
+</table>
+
+<p>两条注意:</p>
+<ul>
+  <li><strong>没有隐式类型转换。</strong><code>var n int = 3</code> 之后 <code>var f float64 = n</code> 编译报错,必须写 <code>float64(n)</code>。JS 的隐式强制转换(如 <code>"1" + 1</code>)在 Go 里完全不存在——一切转换都显式。</li>
+  <li><strong>用 <code>%T</code> 打印类型:</strong><code>fmt.Printf("%T", x)</code> 输出 x 的类型(对照 TS 的 <code>typeof</code>)。注意 <code>rune</code> 打印出来是 <code>int32</code>,因为它就是 int32 的别名。</li>
+</ul>
+
+<h2>对照代码:同一套声明,两种语言</h2>
+
+<p>完整可运行代码在 <code>demos/02-variables/</code>(<a href="../demos/02-variables/vars.go">vars.go</a> / <a href="../demos/02-variables/vars.ts">vars.ts</a>),核心差异:</p>
+
+<div class="compare">
+  <div>
+    <p class="lang-label">Go — vars.go(节选)</p>
+    <pre><code>var explicit string = "显式类型"
+var inferred = "类型推断"
+short := "短声明"
+
+var s string // 零值 ""
+var n int    // 零值 0
+
+fmt.Printf("%q %d\n", s, n) // "" 0</code></pre>
+  </div>
+  <div>
+    <p class="lang-label">TypeScript — vars.ts(节选)</p>
+    <pre><code>const explicit: string = "显式类型";
+const inferred = "类型推断";
+let short = "短声明";
+
+let s: string; // undefined
+let n: number; // undefined
+
+console.log(s, n); // undefined undefined</code></pre>
+  </div>
+</div>
+
+<pre><code># 两个文件输出对照
+cd demos/02-variables &amp;&amp; go run vars.go
+cd demos/02-variables &amp;&amp; node vars.ts</code></pre>
+
+<h2>练习(动手,5 分钟)</h2>
+
+<ol>
+  <li>运行 <code>go run vars.go</code>,对照注释确认每一行的输出。</li>
+  <li><strong>亲手触发一次编译错误:</strong>在 <code>main()</code> 里加一行 <code>unused := 1</code>,再运行。你会看到 <code>declared and not used: unused</code>——然后把这一行删掉。</li>
+  <li>猜一下再验证:<code>var b byte = 'A'</code> 然后 <code>fmt.Printf("%T %d\n", b, b)</code>,输出是什么?(提示:byte 是 uint8 的别名)</li>
+</ol>
+
+<details>
+  <summary>第 3 步期望输出(先猜完再看)</summary>
+  <pre><code>uint8 65</code></pre>
+  <p>字符 <code>'A'</code> 的码点是 65;<code>%T</code> 显示别名背后的真实类型 <code>uint8</code>,和 rune 显示 <code>int32</code> 同理。</p>
+</details>
+
+<h2>小测验(点选项,立刻得到反馈)</h2>
+
+<div class="quiz" data-explain="string 未初始化时自动得到零值 &quot;&quot;。Go 里没有 undefined。">
+  <p class="quiz-q">1. <code>var s string</code> 之后,<code>s</code> 的值是?</p>
+  <div class="quiz-options">
+    <button class="quiz-opt" data-correct><code>""</code></button>
+    <button class="quiz-opt"><code>undefined</code></button>
+    <button class="quiz-opt"><code>null</code></button>
+    <button class="quiz-opt">编译报错</button>
+  </div>
+  <p class="quiz-feedback"></p>
+</div>
+
+<div class="quiz" data-explain=":= 由右侧字面量推断类型;整数 3 推断为 int。">
+  <p class="quiz-q">2. 函数内 <code>x := 3</code>,x 的类型是?</p>
+  <div class="quiz-options">
+    <button class="quiz-opt"><code>number</code></button>
+    <button class="quiz-opt" data-correct><code>int</code></button>
+    <button class="quiz-opt"><code>float64</code></button>
+    <button class="quiz-opt"><code>any</code></button>
+  </div>
+  <p class="quiz-feedback"></p>
+</div>
+
+<div class="quiz" data-explain="单引号包的是 rune(Unicode 码点,即 int32);字符串必须用双引号。">
+  <p class="quiz-q">3. <code>'a'</code> 在 Go 里的类型是?</p>
+  <div class="quiz-options">
+    <button class="quiz-opt">字符串</button>
+    <button class="quiz-opt" data-correct><code>rune</code></button>
+    <button class="quiz-opt"><code>char</code></button>
+    <button class="quiz-opt"><code>byte</code></button>
+  </div>
+  <p class="quiz-feedback"></p>
+</div>
+
+<div class="quiz" data-explain="未使用的局部变量直接编译失败——Go 对死代码零容忍。">
+  <p class="quiz-q">4. 函数内声明了 <code>x := 1</code> 却从不使用,会怎样?</p>
+  <div class="quiz-options">
+    <button class="quiz-opt" data-correct>编译报错</button>
+    <button class="quiz-opt">运行时报错</button>
+    <button class="quiz-opt">正常运行</button>
+    <button class="quiz-opt">仅告警提示</button>
+  </div>
+  <p class="quiz-feedback"></p>
+</div>
+
+<h2>本课引用</h2>
+
+<ul>
+  <li><strong>主源(必读):</strong><a href="https://go.dev/tour/basics/8">A Tour of Go — Variables</a>,官方交互式教程,把 Variables 到 Constants 这一段(约 6 小节)在浏览器里跑一遍。</li>
+  <li><a href="https://go.dev/tour/basics/12">A Tour of Go — Zero values</a> — 零值的官方定义。</li>
+  <li><a href="https://go.dev/tour/basics/13">A Tour of Go — Type conversions</a> — 显式类型转换。</li>
+  <li>上一课:<a href="0001-hello-world-and-toolchain.html">第 1 课:把 Go 跑起来</a>。</li>
+  <li>对照速查:<a href="../reference/0002-variables-types.html">变量与类型速查表</a>。</li>
+</ul>
+
+<footer class="lesson-footer">
+  <p><strong>有不清楚的地方?</strong>直接问你的 agent 老师——比如"<code>:=</code> 为什么只能用在函数里"这类问题,它随时可以展开讲。</p>
+  <p>下节课预告:<strong>控制流</strong>——<code>if</code> / <code>for</code> / <code>switch</code>,以及那个"没有 while 的 for"。</p>
+</footer>
+
+</body>
+</html>

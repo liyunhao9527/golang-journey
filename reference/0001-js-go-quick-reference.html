@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS↔Go 快速对照表</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header class="lesson-header">
+  <p class="kicker">Reference 01 · 速查</p>
+  <h1>JS/TS ↔ Go 快速对照表</h1>
+  <p class="meta">随课程持续扩充 · 第 1 课范围:工具链与入门语法</p>
+</header>
+
+<h2>工具链</h2>
+
+<table>
+  <tr><th>做的事</th><th>JS/TS</th><th>Go</th></tr>
+  <tr><td>运行脚本</td><td><code>node hello.js</code></td><td><code>go run hello.go</code></td></tr>
+  <tr><td>编译 / 类型检查</td><td><code>tsc --noEmit</code></td><td><code>go build</code></td></tr>
+  <tr><td>格式化</td><td><code>prettier --write</code></td><td><code>go fmt</code></td></tr>
+  <tr><td>初始化项目</td><td><code>npm init</code></td><td><code>go mod init &lt;module&gt;</code></td></tr>
+  <tr><td>安装依赖</td><td><code>npm install &lt;pkg&gt;</code></td><td><code>go get &lt;pkg&gt;</code></td></tr>
+  <tr><td>整理依赖清单</td><td>—</td><td><code>go mod tidy</code></td></tr>
+  <tr><td>跑测试</td><td><code>vitest</code> / <code>jest</code></td><td><code>go test</code></td></tr>
+  <tr><td>产物</td><td><code>dist/</code> + <code>node_modules</code></td><td>单个静态二进制</td></tr>
+</table>
+
+<h2>入门语法</h2>
+
+<table>
+  <tr><th>主题</th><th>JS/TS</th><th>Go</th></tr>
+  <tr><td>打印一行</td><td><code>console.log("x")</code></td><td><code>fmt.Println("x")</code></td></tr>
+  <tr><td>注释</td><td><code>//</code> 与 <code>/* */</code></td><td>相同;文档注释惯例:直接写在声明上方</td></tr>
+  <tr><td>入口</td><td>隐式(脚本顶层)</td><td><code>func main()</code>,必须在 <code>package main</code> 里</td></tr>
+  <tr><td>字符串</td><td><code>''</code> <code>""</code> <code>``</code></td><td>只有 <code>""</code> 与 <code>``</code>;<strong><code>'a'</code> 是 rune(字符),不是字符串!</strong></td></tr>
+  <tr><td>语句结尾</td><td>分号可选</td><td>自动插入分号,惯例不写 <code>;</code></td></tr>
+  <tr><td>导出/可见性</td><td><code>export</code> 关键字</td><td>标识符首字母大写 = 导出(跨包可见),小写 = 包内私有</td></tr>
+  <tr><td>包/模块</td><td><code>import ... from "..."</code></td><td><code>import "fmt"</code> —— 按包导入,不写函数名</td></tr>
+</table>
+
+<blockquote>
+  <p><strong>本课重点记忆:</strong><code>'a'</code> 在 Go 里不是字符串——这是前端开发者最常踩的第一个坑,第 2 课讲类型时会展开。</p>
+</blockquote>
+
+<h2>对照代码:Hello World 双版本</h2>
+
+<div class="compare">
+  <div>
+    <p class="lang-label">Go — hello.go</p>
+    <pre><code>package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Hello, Go!")
+}</code></pre>
+  </div>
+  <div>
+    <p class="lang-label">TypeScript — hello.ts</p>
+    <pre><code>// 入口是隐式的,顶层代码直接执行
+console.log("Hello, Go!");</code></pre>
+  </div>
+</div>
+
+<p>本表随课程每课扩充。来源:官方 <a href="https://go.dev/tour/">A Tour of Go</a> 与 <a href="https://gobyexample.com/">Go by Example</a>。</p>
+
+<footer class="lesson-footer">
+  <p>← <a href="../lessons/0001-hello-world-and-toolchain.html">回到第 1 课</a></p>
+</footer>
+
+</body>
+</html>

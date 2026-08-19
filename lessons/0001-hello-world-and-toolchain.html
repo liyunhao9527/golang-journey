@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 1 课:把 Go 跑起来 —— 第一个程序与工具链</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header class="lesson-header">
+  <p class="kicker">Lesson 01 · 从 0 开始</p>
+  <h1>把 Go 跑起来:第一个程序与工具链</h1>
+  <p class="meta">预计 15 分钟 · 对照基线:TypeScript · 主源:<a href="https://go.dev/tour/welcome/1">A Tour of Go</a></p>
+</header>
+
+<div class="goal">
+  <strong>本课胜利:</strong>在你的机器上跑通第一个 Go 程序,并能在 <code>node</code>/<code>npm</code> 与 <code>go</code> 命令之间自由切换。
+</div>
+
+<h2>第 0 步:安装 Go</h2>
+
+<p>你的机器还没装 Go。用 Homebrew 一条命令装好(只运行一次):</p>
+
+<pre><code>brew install go</code></pre>
+
+<p>验证安装(对照 <code>node --version</code>):</p>
+
+<pre><code>go version
+# 期望输出类似:go version go1.24.x darwin/amd64</code></pre>
+
+<h2>第 1 步:第一个 Go 程序</h2>
+
+<p>这一对文件已经放在 <code>demos/01-hello/</code> 里:<code>hello.go</code> 是 Go 版,<code>hello.ts</code> 是 TS 对照版(以后每课都有这样的成对代码)。先看 Go 版:</p>
+
+<pre><code>package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Hello, Go!")
+}</code></pre>
+
+<p>逐行解读,每一行都和 TS 对照着看:</p>
+
+<table>
+  <tr><th>Go 代码</th><th>含义</th><th>TS 对照</th></tr>
+  <tr>
+    <td><code>package main</code></td>
+    <td>声明这个文件属于 <code>main</code> 包。可执行程序的入口包必须叫 <code>main</code></td>
+    <td>TS 没有包概念;类比"入口文件"约定,但 Go 是强制的</td>
+  </tr>
+  <tr>
+    <td><code>import "fmt"</code></td>
+    <td>引入标准库 <code>fmt</code>(格式化输入输出)</td>
+    <td><code>import { ... } from "..."</code>——但 Go 按"包"导入,不写具体函数名</td>
+  </tr>
+  <tr>
+    <td><code>func main()</code></td>
+    <td>程序入口函数。从 <code>main</code> 包的这个函数开始执行</td>
+    <td>TS 入口是隐式的(脚本顶层代码);Go 必须有显式的 <code>func main()</code></td>
+  </tr>
+  <tr>
+    <td><code>fmt.Println("Hello, Go!")</code></td>
+    <td>打印一行。自动换行、自动在参数间加空格</td>
+    <td><code>console.log</code>——但注意 <code>Println</code> 首字母<strong>大写</strong>,这是 Go 的"导出"标志</td>
+  </tr>
+</table>
+
+<p>运行它(对照 <code>node hello.js</code>):</p>
+
+<pre><code>cd demos/01-hello
+go run hello.go
+# 输出:Hello, Go!</code></pre>
+
+<blockquote>
+  <p><strong>关键差异:</strong><code>go run</code> 会先编译再运行;<code>go build</code> 则产出<strong>单个静态二进制</strong>——一个文件,拷到任何机器(无需装 Go)就能跑。这是和 Node 生态最大的心智差异之一:没有运行时、没有 <code>node_modules</code>。</p>
+</blockquote>
+
+<h2>对照代码:同一个程序,两种语言</h2>
+
+<p>上面讲的是"Go 怎么写",现在把两个版本并排放——这是本课程的核心学习方式,<strong>每个概念都给你一份可运行的双语对照</strong>:</p>
+
+<div class="compare">
+  <div>
+    <p class="lang-label">Go — hello.go</p>
+    <pre><code>package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Hello, Go!")
+}</code></pre>
+  </div>
+  <div>
+    <p class="lang-label">TypeScript — hello.ts</p>
+    <pre><code>// 入口是隐式的,顶层代码直接执行
+console.log("Hello, Go!");</code></pre>
+  </div>
+</div>
+
+<p>两个文件输出完全一样,运行方式对照:</p>
+
+<pre><code># Go:先编译再运行
+cd demos/01-hello &amp;&amp; go run hello.go
+
+# TS:直接解释执行
+cd demos/01-hello &amp;&amp; node hello.ts</code></pre>
+
+<p>注意 <code>hello.ts</code> 里<strong>没有</strong> <code>package</code>、<strong>没有</strong> <code>import</code>、<strong>没有</strong> <code>func main()</code>——TS 的入口是隐式的,Go 的一切都是显式的。这就是第一课的对照结论。</p>
+
+<h2>第 2 步:工具链对照表</h2>
+
+<table>
+  <tr><th>做的事</th><th>JS/TS</th><th>Go</th></tr>
+  <tr><td>运行脚本</td><td><code>node hello.js</code></td><td><code>go run hello.go</code></td></tr>
+  <tr><td>编译 / 类型检查</td><td><code>tsc --noEmit</code></td><td><code>go build</code></td></tr>
+  <tr><td>格式化</td><td><code>prettier --write</code></td><td><code>go fmt</code>(官方工具,社区铁律)</td></tr>
+  <tr><td>初始化项目</td><td><code>npm init</code></td><td><code>go mod init &lt;module名&gt;</code></td></tr>
+  <tr><td>安装依赖</td><td><code>npm install &lt;pkg&gt;</code></td><td><code>go get &lt;pkg&gt;</code></td></tr>
+  <tr><td>整理依赖清单</td><td>—(npm 自动写)</td><td><code>go mod tidy</code>(显式整理)</td></tr>
+  <tr><td>跑测试</td><td><code>vitest</code> / <code>jest</code></td><td><code>go test</code>(测试框架是标准库自带)</td></tr>
+  <tr><td>产物</td><td><code>dist/</code> + <code>node_modules</code></td><td>单个二进制文件</td></tr>
+</table>
+
+<p>两个值得记住的要点:</p>
+<ul>
+  <li><strong><code>go fmt</code> 不是插件:</strong>它是官方工具,所有 Go 代码格式统一,团队里不存在"格式之争"。</li>
+  <li><strong>测试是内置的:</strong>不需要选型 vitest 还是 jest——<code>go test</code> 就是标准。</li>
+</ul>
+
+<h2>练习(动手,2 分钟)</h2>
+
+<p>在 <code>demos/01-hello/hello.go</code> 基础上改造(TS 对照文件 <code>hello.ts</code> 保持原样):</p>
+
+<ol>
+  <li>打印 <code>Hello, &lt;你的名字&gt;!</code></li>
+  <li>再打印一行你最喜欢的编程语言。提示:<code>fmt.Println</code> 一次只打印一行,但可以在一个调用里传多个参数:<code>fmt.Println("A", "B")</code> 会输出 <code>A B</code></li>
+</ol>
+
+<pre><code>cd demos/01-hello
+go run hello.go</code></pre>
+
+<details>
+  <summary>期望输出(先自己写完再看)</summary>
+  <pre><code>Hello, Leo!
+I love TypeScript!</code></pre>
+  <p>如果输出和预期不一样,先检查:字符串用了双引号?单词大小写?文件名以 <code>.go</code> 结尾?</p>
+</details>
+
+<h2>小测验</h2>
+
+<div class="quiz">
+  <ol>
+    <li>Go 程序的入口是哪个?
+      <br>A. package main &nbsp; B. func main &nbsp; C. func init &nbsp; D. var main
+      <p class="answer">答案:B —— <code>main</code> 包里的 <code>func main()</code> 是入口。</p>
+    </li>
+    <li>哪个命令编译并运行 Go 文件?
+      <br>A. go run &nbsp; B. go build &nbsp; C. go test &nbsp; D. go fmt
+      <p class="answer">答案:A —— <code>go run</code> 编译并运行;<code>go build</code> 只编译出二进制。</p>
+    </li>
+  </ol>
+</div>
+
+<h2>本课引用</h2>
+
+<ul>
+  <li><strong>主源(必读):</strong><a href="https://go.dev/tour/welcome/1">A Tour of Go — Welcome</a>,官方交互式教程第一节,在浏览器里跑一遍 <code>Hello, 世界</code>。</li>
+  <li><a href="https://go.dev/doc/install">go.dev/doc/install</a> — 官方安装说明(Homebrew 是其中一种方式)。</li>
+  <li>对照速查:<a href="../reference/0001-js-go-quick-reference.html">JS↔Go 快速对照表</a>(随课程持续扩充)。</li>
+</ul>
+
+<footer class="lesson-footer">
+  <p><strong>有不清楚的地方?</strong>直接问你的 agent 老师——它会针对你的问题深入讲解。</p>
+  <p>下节课预告:<strong>变量与类型</strong>——<code>const</code>/<code>let</code> 与 Go 的类型推断,以及那个著名的"零值"。</p>
+</footer>
+
+</body>
+</html>

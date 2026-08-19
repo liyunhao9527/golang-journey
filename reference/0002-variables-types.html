@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>变量与类型速查表</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header class="lesson-header">
+  <p class="kicker">Reference 02 · 速查</p>
+  <h1>变量与类型速查表</h1>
+  <p class="meta">第 2 课范围:声明、类型、零值 · 对照基线:TypeScript</p>
+</header>
+
+<h2>声明方式</h2>
+
+<table>
+  <tr><th>写法</th><th>位置</th><th>TS 对照</th></tr>
+  <tr><td><code>var x string = "a"</code></td><td>包级 / 函数内</td><td><code>let x: string = "a"</code></td></tr>
+  <tr><td><code>var x = "a"</code></td><td>包级 / 函数内</td><td><code>let x = "a"</code></td></tr>
+  <tr><td><code>x := "a"</code></td><td><strong>仅函数内</strong></td><td>TS 无等价物;= let + 推断</td></tr>
+  <tr><td><code>const x = "a"</code></td><td>包级 / 函数内</td><td><code>const x = "a"</code></td></tr>
+</table>
+
+<p>铁律:类型一旦确定不可变;<code>:=</code> 左侧至少要有一个新变量;<code>:=</code> 不能与 <code>const</code> 连用。</p>
+
+<h2>零值(声明不初始化时的默认值)</h2>
+
+<table>
+  <tr><th>类型</th><th>零值</th></tr>
+  <tr><td><code>string</code></td><td><code>""</code></td></tr>
+  <tr><td><code>int</code> 系列 / <code>uint</code> 系列</td><td><code>0</code></td></tr>
+  <tr><td><code>float64</code> / <code>float32</code></td><td><code>0.0</code></td></tr>
+  <tr><td><code>bool</code></td><td><code>false</code></td></tr>
+  <tr><td><code>byte</code> / <code>rune</code></td><td><code>0</code></td></tr>
+  <tr><td>slice / map / 函数 / 指针 / 接口</td><td><code>nil</code>(后续课程展开)</td></tr>
+</table>
+
+<p>对照:TS 中是 <code>undefined</code>;Go 中没有 undefined,变量从出生就有合法值。</p>
+
+<h2>基础类型与 TS 对照</h2>
+
+<table>
+  <tr><th>Go</th><th>TS</th><th>备注</th></tr>
+  <tr><td><code>string</code></td><td><code>string</code></td><td>只有 <code>""</code> / <code>``</code>;<code>'a'</code> 是 rune 不是字符串</td></tr>
+  <tr><td><code>bool</code></td><td><code>boolean</code></td><td></td></tr>
+  <tr><td><code>int</code>, <code>int8</code>-<code>int64</code>, <code>uint8</code>-<code>uint64</code></td><td><code>number</code></td><td>JS 只有一种 number;Go 显式区分位数与符号</td></tr>
+  <tr><td><code>float64</code>, <code>float32</code></td><td><code>number</code></td><td><code>float64</code> 是默认</td></tr>
+  <tr><td><code>byte</code></td><td>—</td><td>别名 <code>uint8</code>,处理字节</td></tr>
+  <tr><td><code>rune</code></td><td>—</td><td>别名 <code>int32</code>,Unicode 码点;<code>%T</code> 打印显示 <code>int32</code></td></tr>
+</table>
+
+<h2>易错点</h2>
+
+<ul>
+  <li><strong>未使用的局部变量、未使用的 import</strong> → 编译错误。<code>declared and not used: x</code></li>
+  <li><strong>无隐式类型转换:</strong><code>int</code> → <code>float64</code> 必须写 <code>float64(n)</code>;JS 的强制转换在 Go 里不存在。</li>
+  <li><strong><code>:=</code> 只能函数内用;</strong>包级只有 <code>var</code> / <code>const</code>。</li>
+  <li><strong><code>'a'</code> ≠ 字符串:</strong>单引号 = rune,双引号 = string。</li>
+  <li>变量声明了但没初始化是合法的(得到零值)——和 TS 的 "used before assigned" 完全不同。</li>
+</ul>
+
+<h2>调试工具:fmt 动词速查</h2>
+
+<table>
+  <tr><th>动词</th><th>作用</th><th>示例输出(<code>x := "hi"</code>)</th></tr>
+  <tr><td><code>%v</code></td><td>默认格式(万能)</td><td><code>hi</code></td></tr>
+  <tr><td><code>%T</code></td><td>类型(对照 <code>typeof</code>)</td><td><code>string</code></td></tr>
+  <tr><td><code>%q</code></td><td>带引号的字符串</td><td><code>"hi"</code></td></tr>
+  <tr><td><code>%d</code></td><td>整数</td><td>—</td></tr>
+  <tr><td><code>%f</code></td><td>浮点</td><td>—</td></tr>
+  <tr><td><code>%t</code></td><td>布尔</td><td>—</td></tr>
+</table>
+
+<footer class="lesson-footer">
+  <p>← <a href="../lessons/0002-variables-and-types.html">回到第 2 课</a> · 代码示例:<a href="../demos/02-variables/vars.go">vars.go</a> / <a href="../demos/02-variables/vars.ts">vars.ts</a></p>
+</footer>
+
+</body>
+</html>

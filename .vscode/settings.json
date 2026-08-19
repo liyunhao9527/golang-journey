@@ -1,0 +1,13 @@
+{
+  // Code Runner 默认用 /bin/sh 裸执行命令,读不到 shell profile,
+  // 因此 PATH 里没有 fnm 管理的 node/ts-node,会报 "command not found"。
+  // 改为在集成终端(zsh,会加载 ~/.zshrc 里的 fnm hook)中运行。
+  "code-runner.runInTerminal": true,
+
+  // 不用 ts-node:它已停更,与全局的 TypeScript 7.x 不兼容。
+  // Node 24 原生支持类型剥离,直接 node 运行即可(enum/namespace 等
+  // 需要转换的语法不支持,那种文件改用 `npx tsx $fileName`)。
+  "code-runner.executorMap": {
+    "typescript": "cd $dir && node $fileName"
+  }
+}

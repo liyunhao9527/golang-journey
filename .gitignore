@@ -13,5 +13,4 @@ go.work.sum
 
 # IDE / OS
 .idea/
-.vscode/
 .DS_Store
