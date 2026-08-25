@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>速查:控制流(if / for / range / switch)</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header class="lesson-header">
+  <p class="kicker">Reference 03 · 速查表</p>
+  <h1>控制流:if / for / range / switch</h1>
+  <p class="meta">Go ↔ TypeScript 对照 · 相关课程:<a href="../lessons/0003-control-flow.html">第 3 课</a></p>
+</header>
+
+<h2>一图总览</h2>
+
+<table>
+  <tr><th>要做的事</th><th>Go</th><th>TS</th></tr>
+  <tr><td>条件</td><td><code>if x &gt; 10 {}</code>(无括号,花括号必须)</td><td><code>if (x &gt; 10) {}</code></td></tr>
+  <tr><td>带初始化的条件</td><td><code>if v := f(); v &gt; 0 {}</code></td><td>无,声明只能放外面</td></tr>
+  <tr><td>三元表达式</td><td><strong>不存在</strong>,写 if/else</td><td><code>cond ? a : b</code></td></tr>
+  <tr><td>经典循环</td><td><code>for i := 0; i &lt; n; i++ {}</code></td><td><code>for (let i = 0; i &lt; n; i++) {}</code></td></tr>
+  <tr><td>while 循环</td><td><code>for cond {}</code></td><td><code>while (cond) {}</code></td></tr>
+  <tr><td>无限循环</td><td><code>for {}</code></td><td><code>while (true) {}</code></td></tr>
+  <tr><td>遍历值</td><td><code>for _, v := range xs {}</code></td><td><code>for (const v of xs) {}</code></td></tr>
+  <tr><td>遍历索引+值</td><td><code>for i, v := range xs {}</code></td><td><code>xs.forEach((v, i) =&gt; {})</code></td></tr>
+  <tr><td>多分支</td><td><code>switch x { case "a", "b": }</code>(自动 break)</td><td><code>switch (x) { case "a": case "b": }</code>(要手动 break)</td></tr>
+  <tr><td>无条件多分支</td><td><code>switch { case cond: }</code> ← 招牌惯用法</td><td>if / else if 链</td></tr>
+</table>
+
+<h2>if 带初始化:作用域最小化</h2>
+
+<pre><code>// val 只在 if/else 块内可见,出块即消失
+if val := compute(); val &gt; 100 {
+    use(val)
+} else {
+    use(val * 2) // else 里也能用
+}
+// val 在这里不存在(编译错误)</code></pre>
+
+<h2>for 的三种形态 + range</h2>
+
+<pre><code>for i := 0; i &lt; 5; i++ {}  // 三段式
+for n &lt; 100 {}            // = while
+for {}                    // = while(true)
+
+for i, v := range slice {}   // 索引 + 值
+for _, v := range slice {}   // 只要值(_ 丢弃)
+for i := range slice {}      // 只要索引
+for k, v := range map {}     // 键 + 值(遍历顺序随机!)</code></pre>
+
+<p><strong>i++ 注意:</strong>只有后置 <code>i++</code>,没有 <code>++i</code>;且它是语句不是表达式——<code>x := i++</code> 编译报错。</p>
+
+<h2>range 遍历字符串:按 rune,索引按字节</h2>
+
+<pre><code>for i, c := range "go语言" {}
+// 4 次迭代:c 依次是 g、o、语、言(类型 rune)
+// i 依次是 0、1、2、5 —— 汉字占 3 字节,索引跳的是字节</code></pre>
+
+<h2>switch 三差异</h2>
+
+<ol>
+  <li><strong>默认不贯穿</strong>:case 匹配后自动 break;要贯穿必须显式写 <code>fallthrough</code>(几乎不用)。</li>
+  <li><strong>case 可为任意表达式</strong>,不必是常量;<code>case "sat", "sun":</code> 多值共一分支。</li>
+  <li><strong>无条件 switch</strong>(<code>switch {}</code> + <code>case cond:</code>)= 整齐的 if-else 链,Go 招牌写法。</li>
+</ol>
+
+<pre><code>switch {                // 无条件:按顺序找第一个为真的 case
+case score &gt;= 90:
+    grade = "A"
+case score &gt;= 80:
+    grade = "B"
+default:
+    grade = "C"
+}</code></pre>
+
+<h2>前端最容易踩的 5 个坑</h2>
+
+<ol>
+  <li><code>if (x &gt; 10)</code> 带括号 → 编译报错(把它当表达式解析)。</li>
+  <li>手滑写三元 <code>a &gt; b ? a : b</code> → 编译报错,Go 没有。</li>
+  <li>switch 期待贯穿行为 → 没有;显式写 <code>fallthrough</code>。</li>
+  <li>range 里保留不需要的 <code>i</code> → "declared and not used",用 <code>_</code> 丢弃。</li>
+  <li>期待 <code>for...in</code>/<code>for...of</code> 语法 → 只有 <code>for range</code>;另外 range map 顺序每次运行随机。</li>
+</ol>
+
+<footer class="lesson-footer">
+  <p>相关:<a href="../lessons/0003-control-flow.html">第 3 课:控制流</a> · <a href="0002-variables-types.html">变量与类型速查</a> · <a href="0001-js-go-quick-reference.html">JS/Go 总对照</a></p>
+</footer>
+
+</body>
+</html>

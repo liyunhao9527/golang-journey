@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // 包级声明:只能用 var / const,不能用 :=
 const version = "1.0" // 未使用的包级常量不报错
@@ -13,6 +16,13 @@ func main() {
 
 	fmt.Println(explicit, inferred, short)
 
+	var number1 uint8 = 255
+
+	var myName = "19"
+
+	fmt.Println(strconv.Atoi(myName))
+
+	fmt.Println(number1)
 	// 零值:声明但不初始化,自动得到类型的"零值"
 	var s string
 	var n int

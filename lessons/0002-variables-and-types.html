@@ -89,11 +89,31 @@
   <tr><td><code>rune</code> = <code>int32</code></td><td>—</td><td>Unicode 码点。前端最常踩的坑:<code>'a'</code> 的类型是 <code>rune</code>,不是字符串</td></tr>
 </table>
 
-<p>两条注意:</p>
-<ul>
-  <li><strong>没有隐式类型转换。</strong><code>var n int = 3</code> 之后 <code>var f float64 = n</code> 编译报错,必须写 <code>float64(n)</code>。JS 的隐式强制转换(如 <code>"1" + 1</code>)在 Go 里完全不存在——一切转换都显式。</li>
-  <li><strong>用 <code>%T</code> 打印类型:</strong><code>fmt.Printf("%T", x)</code> 输出 x 的类型(对照 TS 的 <code>typeof</code>)。注意 <code>rune</code> 打印出来是 <code>int32</code>,因为它就是 int32 的别名。</li>
-</ul>
+<p><strong>用 <code>%T</code> 打印类型:</strong><code>fmt.Printf("%T", x)</code> 输出 x 的类型(对照 TS 的 <code>typeof</code>)。注意 <code>rune</code> 打印出来是 <code>int32</code>,因为它就是 int32 的别名。</p>
+
+<h2>显式类型转换:<code>T(x)</code></h2>
+
+<p>Go 不会在不同类型之间自动转换。即使 <code>int</code> 和 <code>float64</code> 都表示数字,也必须明确写出目标类型:</p>
+
+<pre><code>var n int = 3
+var f float64 = float64(n)
+
+fmt.Printf("%T %v\n", n, n) // int 3
+fmt.Printf("%T %v\n", f, f) // float64 3</code></pre>
+
+<p>通用写法是 <code>目标类型(值)</code>,也就是 <code>T(x)</code>。它会产生一个新值,不会改变原变量的类型——上面的 <code>n</code> 转换后仍然是 <code>int</code>。</p>
+
+<p>反向转换也可以,但小数部分会被直接截掉,不是四舍五入:</p>
+
+<pre><code>price := 19.9
+whole := int(price)
+fmt.Println(whole) // 19</code></pre>
+
+<blockquote>
+  <p><strong>转换不等于解析。</strong><code>int(3.8)</code> 是数字类型之间的转换;把字符串 <code>"42"</code> 读成数字要用 <code>strconv.Atoi</code> 或 <code>strconv.ParseInt</code>,不能写 <code>int("42")</code>。字符串解析会在后续处理输入时展开。</p>
+</blockquote>
+
+<p>这和 JS/TS 的隐式强制转换不同:Go 中 <code>"1" + 1</code> 不能编译。明确写出转换,能让数值精度和数据含义的变化一眼可见。</p>
 
 <h2>对照代码:同一套声明,两种语言</h2>
 
@@ -134,6 +154,7 @@ cd demos/02-variables &amp;&amp; node vars.ts</code></pre>
   <li>运行 <code>go run vars.go</code>,对照注释确认每一行的输出。</li>
   <li><strong>亲手触发一次编译错误:</strong>在 <code>main()</code> 里加一行 <code>unused := 1</code>,再运行。你会看到 <code>declared and not used: unused</code>——然后把这一行删掉。</li>
   <li>猜一下再验证:<code>var b byte = 'A'</code> 然后 <code>fmt.Printf("%T %d\n", b, b)</code>,输出是什么?(提示:byte 是 uint8 的别名)</li>
+  <li>先猜再运行:<code>f := 8.75</code>、<code>n := int(f)</code>,然后打印 <code>f</code>、<code>n</code> 及各自的类型。确认转换产生了新值,且结果是截断而非四舍五入。</li>
 </ol>
 
 <details>
