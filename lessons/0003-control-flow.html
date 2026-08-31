@@ -150,6 +150,27 @@ for (const i in names) {
 
 <p><code>_</code>(下划线)是 Go 的"我故意不要这个值"——还记得第 2 课吗?未使用的变量是编译错误,所以不想用就必须显式扔掉,而 <code>_</code> 专门豁免这条规则。</p>
 
+<p>字符串也可以直接用 <code>range</code> 遍历。下面的 <code>c</code> 是 <code>rune</code>(底层类型是 <code>int32</code>),所以中文和 emoji 都会作为一个完整字符取出:</p>
+
+<div class="compare">
+  <div>
+    <p class="lang-label">Go</p>
+    <pre><code>for i, c := range "go语言 🚀" {
+    fmt.Printf("字节索引=%d, 字符=%c, 类型=%T\n", i, c, c)
+}
+// 输出的索引大致是:0 1 2 5 8 9
+// g  o  语   言  空格 🚀</code></pre>
+  </div>
+  <div>
+    <p class="lang-label">TypeScript</p>
+    <pre><code>for (const c of "go语言 🚀") {
+  console.log("字符=", c);
+}
+// for...of 也会逐个取出 Unicode 码点,
+// 但它不会同时给出 Go 那样的字节索引。</code></pre>
+  </div>
+</div>
+
 <blockquote>
   <p><strong>关键差异:</strong>range 遍历字符串时按 <strong>rune</strong>(Unicode 码点)走,不是按字节也不是按 JS 那样的 UTF-16 码元。遇到 emoji 也不会像 JS 那样拆成两个代理项。这对前端是好消息。</p>
 </blockquote>

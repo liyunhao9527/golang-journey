@@ -91,6 +91,45 @@
 
 <p><strong>用 <code>%T</code> 打印类型:</strong><code>fmt.Printf("%T", x)</code> 输出 x 的类型(对照 TS 的 <code>typeof</code>)。注意 <code>rune</code> 打印出来是 <code>int32</code>,因为它就是 int32 的别名。</p>
 
+<h3><code>fmt.Printf</code> 常用占位符</h3>
+
+<p><code>%</code> 加字母是<strong>输出格式占位符</strong>,不是类型转换。它只决定传入的值如何显示,不会改变变量本身的类型:</p>
+
+<table>
+  <tr><th>占位符</th><th>用途</th><th>示例</th></tr>
+  <tr><td><code>%v</code></td><td>默认格式,通用打印</td><td><code>fmt.Printf("%v", x)</code></td></tr>
+  <tr><td><code>%+v</code></td><td>结构体打印字段名和值</td><td><code>fmt.Printf("%+v", user)</code></td></tr>
+  <tr><td><code>%T</code></td><td>打印值的类型</td><td><code>int</code></td></tr>
+  <tr><td><code>%d</code></td><td>十进制整数</td><td><code>42</code></td></tr>
+  <tr><td><code>%f</code></td><td>浮点数</td><td><code>3.140000</code></td></tr>
+  <tr><td><code>%t</code></td><td>布尔值</td><td><code>true</code></td></tr>
+  <tr><td><code>%s</code></td><td>字符串</td><td><code>hello</code></td></tr>
+  <tr><td><code>%q</code></td><td>带引号的字符串或字符</td><td><code>"hello"</code></td></tr>
+  <tr><td><code>%c</code></td><td>把整数/rune 按 Unicode 字符显示</td><td><code>A</code></td></tr>
+</table>
+
+<pre><code>n := 65
+fmt.Printf("%d %c\n", n, n) // 65 A</code></pre>
+
+<p>和 TS 对照:</p>
+
+<div class="compare">
+  <div>
+    <p class="lang-label">Go</p>
+    <pre><code>n := 65
+fmt.Printf("%d %c\n", n, n) // 65 A
+fmt.Printf("%T\n", n)         // int</code></pre>
+  </div>
+  <div>
+    <p class="lang-label">TypeScript</p>
+    <pre><code>const n = 65;
+console.log(n, String.fromCodePoint(n)); // 65 A
+console.log(typeof n);                  // number</code></pre>
+  </div>
+</div>
+
+<p>TS 的 <code>console.log</code> 通常直接接收值,不会像 Go 的 <code>Printf</code> 一样用 <code>%d</code>、<code>%c</code> 控制每个参数的显示格式;需要组合文本时可以使用模板字符串,例如 <code>console.log(`${n} ${String.fromCodePoint(n)}`)</code>。</p>
+
 <h2>显式类型转换:<code>T(x)</code></h2>
 
 <p>Go 不会在不同类型之间自动转换。即使 <code>int</code> 和 <code>float64</code> 都表示数字,也必须明确写出目标类型:</p>
