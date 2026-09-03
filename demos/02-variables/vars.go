@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 )
 
 // 包级声明:只能用 var / const,不能用 :=
@@ -16,13 +15,6 @@ func main() {
 
 	fmt.Println(explicit, inferred, short)
 
-	var number1 uint8 = 255
-
-	var myName = "19"
-
-	fmt.Println(strconv.Atoi(myName))
-
-	fmt.Println(number1)
 	// 零值:声明但不初始化,自动得到类型的"零值"
 	var s string
 	var n int
@@ -43,4 +35,12 @@ func main() {
 	// rune:'a' 是 Unicode 码点(int32 的别名),不是字符串
 	var r rune = 'a'
 	fmt.Printf("'a' 的类型是 %T,值是 %d\n", r, r)
+
+	// 数值类型转换会产生新值;float64 转 int 时直接截断小数部分
+	var wholeNumber int = 3
+	decimal := float64(wholeNumber)
+	price := 19.9
+	wholePrice := int(price)
+	fmt.Printf("%v (%T), %v (%T)\n", wholeNumber, wholeNumber, decimal, decimal)
+	fmt.Printf("%v -> %v\n", price, wholePrice)
 }

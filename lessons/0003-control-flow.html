@@ -3,36 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>第 3 课:控制流 —— if / for / switch</title>
+<meta name="description" content="用 TypeScript 对照学习 Go 的 if、for、range 与 switch 控制流。">
+<meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
+<title>第 3 课：控制流 | if / for / switch</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../assets/vendor/highlight-github.min.css">
 <link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/vendor/highlight.min.js" defer></script>
+<script src="../assets/highlight-init.js" defer></script>
 <script src="../assets/quiz.js" defer></script>
 </head>
-<body>
+<body class="lesson-page compiler-lesson">
+
+<a class="skip-link" href="#lesson-content">跳到正文</a>
+
+<nav class="course-nav" aria-label="课程导航">
+  <a class="course-brand" href="0000-course-list.html">
+    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
+    <span>Golang Journey</span>
+  </a>
+  <div class="course-nav__links">
+    <a href="0000-course-list.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-application-menu"></use></svg><span>课程目录</span></a>
+    <a href="0002-variables-and-types.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-arrow-left"></use></svg><span>上一课</span></a>
+    <a href="../reference/0003-control-flow.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-book-open"></use></svg><span>本课速查</span></a>
+  </div>
+</nav>
+
+<main id="lesson-content" class="lesson-shell">
 
 <header class="lesson-header">
-  <p class="kicker">Lesson 03 · 语法基础</p>
-  <h1>控制流:没有 while 的 for,不会贯穿的 switch</h1>
-  <p class="meta">预计 15 分钟 · 对照基线:TypeScript · 主源:<a href="https://go.dev/tour/flowcontrol/1">A Tour of Go — For</a></p>
+  <div class="lesson-header__copy">
+    <p class="kicker">第 3 课 / 语法基础</p>
+    <h1>控制流</h1>
+    <p class="lesson-deck">把 while 与 fallthrough 的直觉，编译成 Go 的 for 与 switch</p>
+    <p class="meta">
+      <span><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-time"></use></svg>约 15 分钟</span>
+      <span>TypeScript 对照</span>
+      <a href="https://go.dev/tour/flowcontrol/1">主源：A Tour of Go<svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-link-out"></use></svg></a>
+    </p>
+  </div>
+  <div class="syntax-preview compiler-map" aria-label="TypeScript 与 Go 的本课语法对照">
+    <p class="compiler-map__label">本课对照</p>
+    <div class="compiler-map__row">
+      <code><span>TS</span> while (condition)</code>
+      <i aria-hidden="true">↳</i>
+      <code><span>GO</span> for condition { }</code>
+    </div>
+    <div class="compiler-map__row">
+      <code><span>TS</span> switch + break</code>
+      <i aria-hidden="true">↳</i>
+      <code><span>GO</span> switch / auto break</code>
+    </div>
+    <div class="compiler-map__row">
+      <code><span>TS</span> i++ expression</code>
+      <i aria-hidden="true">↳</i>
+      <code><span>GO</span> i++ statement</code>
+    </div>
+    <p class="compiler-map__mobile"><code>while</code> → <code>for</code> · <code>switch</code> 自动退出 · <code>i++</code> 是语句</p>
+  </div>
+  <div class="goal compiler-goal">
+    <strong>本课目标</strong>
+    <span>完成本课后，你能用 <code>for</code> 写三种循环，用 <code>if</code> / <code>switch</code> 初始化语句收窄作用域，并解释它们与 TypeScript 的关键差异。</span>
+  </div>
 </header>
 
-<div class="goal">
-  <strong>本课胜利:</strong>能用 <code>for</code> 写出所有三种循环(包括 while 型和无限循环),能用带初始化语句的 <code>if</code> 和 <code>switch</code> 收窄变量作用域——并理解为什么 Go 敢删掉 while 和三元表达式。
-</div>
+<aside class="lesson-rail">
+  <div class="lesson-rail__inner">
+    <p class="lesson-rail__label">本课目录</p>
+    <nav class="lesson-outline" aria-label="本课目录">
+      <a href="#if"><strong>if</strong><span>作用域与惯用写法</span></a>
+      <a href="#for"><strong>for</strong><span>唯一的循环结构</span></a>
+      <a href="#switch"><strong>switch</strong><span>默认不贯穿</span></a>
+      <a href="#practice"><strong>练习</strong><span>从理解走到独立写</span></a>
+    </nav>
+    <div class="lesson-rail__meta">
+      <span>阅读约 15 分钟</span>
+      <span>5 道随堂测验</span>
+    </div>
+    <div class="lesson-progress" aria-label="基础语法课程进度：已到第 3 课，共 3 课">
+      <span><strong>03</strong> / 03</span>
+      <i aria-hidden="true"><b></b></i>
+      <small>基础语法 · 当前课</small>
+    </div>
+  </div>
+</aside>
 
-<h2>if:长得像,但有两个 Go 味</h2>
+<article class="lesson-article">
 
-<p>结构上和 TS 几乎一样,只有一处强制差异:<strong>条件不需要(也不允许)括号,但花括号必须写</strong>——就算只有一行:</p>
+<section class="lesson-section lesson-section--concept" aria-labelledby="if">
+<h2 id="if">if：相似语法，两处 Go 惯例</h2>
+
+<p>结构上和 TS 几乎一样。Go 的惯用写法是<strong>条件不加括号,花括号必须写</strong>。就算只有一行也是如此。额外括号在语法上合法,但没有必要;读 Go 代码和写 Go 代码时都应认得这两种形式:</p>
 
 <div class="compare">
   <div>
     <p class="lang-label">Go</p>
-    <pre><code>if x &gt; 10 {
+    <pre><code class="language-go">if x &gt; 10 {
     fmt.Println("big")
 }</code></pre>
   </div>
+  <div class="translation-rail" aria-label="Go 与 TypeScript 的异同">
+    <span><b>相同点</b>两种语言都用条件分支和块级作用域</span>
+    <span><b>不同点</b>Go 的条件通常不加括号，花括号必须写</span>
+  </div>
   <div>
     <p class="lang-label">TypeScript</p>
-    <pre><code>if (x > 10) {
+    <pre><code class="language-typescript">if (x > 10) {
   console.log("big");
 }</code></pre>
   </div>
@@ -44,13 +121,21 @@
   <li><strong>if 可以带初始化语句</strong>,用分号隔开。这是 Go 最重要的惯用法之一:</li>
 </ul>
 
-<pre><code>// 先执行 val := something(),再判断
+<pre><code class="language-go">// 先执行 val := something(),再判断
 if val := compute(); val &gt; 100 {
     fmt.Println(val) // ✓ 只在这个 if/else 块里可见
 }
 // fmt.Println(val) // ✗ 编译错误:val 出了块就不存在</code></pre>
 
-<p>TS 没有这个语法,等价写法是把声明放在外面——于是变量泄漏到整个函数作用域。Go 用这个设计鼓励你<strong>把变量的生命周期压到最小</strong>。</p>
+<p>TS 没有 initializer 语法,通常要先声明再判断。<code>let</code>/<code>const</code> 本身是块级作用域,所以可以用<strong>额外的块</strong>限制变量范围;Go 的优势是把“计算 + 判断 + 作用域”紧凑地写在一条 if 语句中:</p>
+
+<pre><code class="language-typescript">{
+  const val = compute();
+  if (val &gt; 100) {
+    console.log(val);
+  }
+}
+// console.log(val); // 编译错误:val 已超出块级作用域</code></pre>
 
 <ul>
   <li><strong>没有三元表达式 <code>cond ? a : b</code>。</strong>Go 认为三元可读性差,一律写 if/else。这是前端写 Go 最常"手痒"的地方。</li>
@@ -60,14 +145,17 @@ if val := compute(); val &gt; 100 {
   <p><strong>为什么?</strong>Go 的口号是"一种事只有一种写法"。while 能写成 for,三元能写成 if,那它们就不该存在。少一种写法,读别人的代码时就少一次猜测。</p>
 </blockquote>
 
-<h2>for:唯一的循环,三种形态</h2>
+</section>
+
+<section class="lesson-section lesson-section--concept" aria-labelledby="for">
+<h2 id="for">for：一个关键字，三种循环</h2>
 
 <p>Go 里<strong>只有 for,没有 while、没有 do-while</strong>。但 for 一个关键字覆盖了全部三种循环:</p>
 
 <div class="compare">
   <div>
-    <p class="lang-label">Go — 三种形态</p>
-    <pre><code>// 1. 经典三段式(没有括号!)
+    <p class="lang-label">Go / 三种形态</p>
+    <pre><code class="language-go">// 1. 经典三段式(没有括号!)
 for i := 0; i &lt; 5; i++ {
     fmt.Println(i)
 }
@@ -83,9 +171,13 @@ for {
     break // 没有 break 就永远跑
 }</code></pre>
   </div>
+  <div class="translation-rail" aria-label="Go 与 TypeScript 的异同">
+    <span><b>相同点</b>都能写计数、条件和无限循环</span>
+    <span><b>不同点</b>Go 的三种循环全部使用 <code>for</code></span>
+  </div>
   <div>
-    <p class="lang-label">TypeScript — 对应写法</p>
-    <pre><code>// 1. 经典三段式
+    <p class="lang-label">TypeScript / 对应写法</p>
+    <pre><code class="language-typescript">// 1. 经典三段式
 for (let i = 0; i < 5; i++) {
   console.log(i);
 }
@@ -105,7 +197,7 @@ while (true) {
 
 <p>记住一句话:<strong><code>for cond {}</code> 就是 Go 的 while,<code>for {}</code> 就是 Go 的 <code>while (true)</code></strong>。</p>
 
-<p>没有 <code>++i</code>,只有 <code>i++</code>——而且 <strong><code>i++</code> 是语句不是表达式</strong>,不能写 <code>x := i++</code>,避免了 JS 里 <code>++i + i++</code> 这类谜题。</p>
+<p>没有 <code>++i</code>,只有 <code>i++</code>。而且 <strong><code>i++</code> 是语句不是表达式</strong>,不能写 <code>x := i++</code>,避免了 JS 里 <code>++i + i++</code> 这类谜题。</p>
 
 <h3>range:遍历的主角</h3>
 
@@ -114,7 +206,7 @@ while (true) {
 <div class="compare">
   <div>
     <p class="lang-label">Go</p>
-    <pre><code>names := []string{"a", "b", "c"}
+    <pre><code class="language-go">names := []string{"a", "b", "c"}
 
 for i, name := range names {
     fmt.Println(i, name)
@@ -130,9 +222,13 @@ for i := range names {
     fmt.Println(i)
 }</code></pre>
   </div>
+  <div class="translation-rail" aria-label="Go 与 TypeScript 的异同">
+    <span><b>相同点</b>两种语言都能逐项遍历集合</span>
+    <span><b>不同点</b>Go 的 <code>range</code> 可以同时返回索引和值</span>
+  </div>
   <div>
     <p class="lang-label">TypeScript</p>
-    <pre><code>const names = ["a", "b", "c"];
+    <pre><code class="language-typescript">const names = ["a", "b", "c"];
 
 names.forEach((name, i) =&gt; {
   console.log(i, name);
@@ -148,22 +244,26 @@ for (const i in names) {
   </div>
 </div>
 
-<p><code>_</code>(下划线)是 Go 的"我故意不要这个值"——还记得第 2 课吗?未使用的变量是编译错误,所以不想用就必须显式扔掉,而 <code>_</code> 专门豁免这条规则。</p>
+<p><code>_</code>(下划线)是 Go 的"我故意不要这个值"。还记得第 2 课吗?未使用的变量是编译错误,所以不想用就必须显式扔掉,而 <code>_</code> 专门豁免这条规则。</p>
 
 <p>字符串也可以直接用 <code>range</code> 遍历。下面的 <code>c</code> 是 <code>rune</code>(底层类型是 <code>int32</code>),所以中文和 emoji 都会作为一个完整字符取出:</p>
 
 <div class="compare">
   <div>
     <p class="lang-label">Go</p>
-    <pre><code>for i, c := range "go语言 🚀" {
+    <pre><code class="language-go">for i, c := range "go语言 🚀" {
     fmt.Printf("字节索引=%d, 字符=%c, 类型=%T\n", i, c, c)
 }
 // 输出的索引大致是:0 1 2 5 8 9
 // g  o  语   言  空格 🚀</code></pre>
   </div>
+  <div class="translation-rail" aria-label="Go 与 TypeScript 的异同">
+    <span><b>相同点</b>两种写法都按 Unicode 码点遍历</span>
+    <span><b>不同点</b>Go 还会同时得到 UTF-8 字节索引</span>
+  </div>
   <div>
     <p class="lang-label">TypeScript</p>
-    <pre><code>for (const c of "go语言 🚀") {
+    <pre><code class="language-typescript">for (const c of "go语言 🚀") {
   console.log("字符=", c);
 }
 // for...of 也会逐个取出 Unicode 码点,
@@ -172,19 +272,22 @@ for (const i in names) {
 </div>
 
 <blockquote>
-  <p><strong>关键差异:</strong>range 遍历字符串时按 <strong>rune</strong>(Unicode 码点)走,不是按字节也不是按 JS 那样的 UTF-16 码元。遇到 emoji 也不会像 JS 那样拆成两个代理项。这对前端是好消息。</p>
+  <p><strong>关键差异:</strong>Go 的 range 按 <strong>rune</strong>(Unicode 码点)迭代,同时返回 UTF-8 字节索引。JS/TS 的 <code>for...of</code> 也按 Unicode 码点迭代,不会拆开这里的 emoji,但没有同时提供字节索引;传统字符串索引 <code>s[i]</code> 才会暴露 UTF-16 码元。</p>
 </blockquote>
 
-<h2>switch:默认不贯穿,还能没有条件</h2>
+</section>
+
+<section class="lesson-section lesson-section--concept" aria-labelledby="switch">
+<h2 id="switch">switch：默认不贯穿，也可以没有条件</h2>
 
 <p>这是 Go 和 TS 差异最大的控制流。三个差异,个个都是反转:</p>
 
-<p><strong>1. 默认不 fallthrough。</strong>TS 的 switch 不写 <code>break</code> 会贯穿到下一个 case(JS 经典 bug 源);Go 反过来——<strong>每个 case 自动 break</strong>,想贯穿反而要显式写 <code>fallthrough</code>:</p>
+<p><strong>1. 默认不 fallthrough。</strong>TS 的 switch 不写 <code>break</code> 会贯穿到下一个 case(JS 经典 bug 源);Go 反过来:<strong>每个 case 自动 break</strong>,想贯穿反而要显式写 <code>fallthrough</code>:</p>
 
 <div class="compare">
   <div>
     <p class="lang-label">Go</p>
-    <pre><code>switch day {
+    <pre><code class="language-go">switch day {
 case "sat", "sun": // 多值共用一个 case
     fmt.Println("周末")
 case "mon":
@@ -192,9 +295,13 @@ case "mon":
     // 自动 break,不会贯穿!
 }</code></pre>
   </div>
+  <div class="translation-rail" aria-label="Go 与 TypeScript 的异同">
+    <span><b>相同点</b>两种语言都用 <code>case</code> 选择分支</span>
+    <span><b>不同点</b>Go 的分支默认结束，不需要写 <code>break</code></span>
+  </div>
   <div>
     <p class="lang-label">TypeScript</p>
-    <pre><code>switch (day) {
+    <pre><code class="language-typescript">switch (day) {
   case "sat":
   case "sun": // 要这样手动堆
     console.log("周末");
@@ -206,9 +313,9 @@ case "mon":
   </div>
 </div>
 
-<p><strong>2. case 不要求是常量。</strong>可以写任意表达式,所以 switch 能当"更整齐的 if-else 链"用——<strong>无条件 switch</strong> 是 Go 的招牌惯用法:</p>
+<p><strong>2. case 不要求是常量。</strong>可以写任意表达式,所以 switch 能当"更整齐的 if-else 链"用。<strong>无条件 switch</strong> 是 Go 的招牌惯用法:</p>
 
-<pre><code>score := 87
+<pre><code class="language-go">score := 87
 switch {
 case score &gt;= 90:
     grade = "A"
@@ -220,30 +327,94 @@ default:
 
 <p><strong>3. switch 也能带初始化语句</strong>,和 if 一样用分号:</p>
 
-<pre><code>switch v := compute(); {
+<pre><code class="language-go">switch v := compute(); {
 case v &gt; 100:
     ...
 }</code></pre>
 
-<h2>对照代码 + 练习</h2>
+</section>
+
+<section class="lesson-section lesson-section--action" aria-labelledby="practice">
+<h2 id="practice">动手练习</h2>
 
 <p>完整可运行代码在 <code>demos/03-control-flow/</code>(<a href="../demos/03-control-flow/control.go">control.go</a> / <a href="../demos/03-control-flow/control.ts">control.ts</a>),覆盖三种 for、range、switch 全部形态。</p>
 
 <ol>
   <li>运行 <code>go run control.go</code>,对照注释确认每段输出。</li>
-  <li><strong>亲手触发两个编译错误:</strong>(a) 把 <code>if x &gt; 10</code> 写成 <code>if (x &gt; 10)</code>;(b) 在 range 循环里保留 <code>i</code> 但不使用它。看看报错信息,再改回来。</li>
-  <li>用<strong>无条件 switch</strong> 写一个 FizzBuzz(1–15):能被 3 整除打印 Fizz,被 5 整除打印 Buzz,同时整除打印 FizzBuzz。这是本课的实战胜利。</li>
+  <li><strong>区分“合法”与“惯用”:</strong>(a) 把 <code>if x &gt; 10</code> 写成 <code>if (x &gt; 10)</code> 并运行,确认它语法合法,然后恢复为惯用写法;(b) 在 range 循环里保留 <code>i</code> 但不使用它,亲手触发未使用变量的编译错误,再用 <code>_</code> 修复。</li>
+  <li>用<strong>无条件 switch</strong> 写一个 FizzBuzz(1-15):能被 3 整除打印 Fizz,被 5 整除打印 Buzz,同时整除打印 FizzBuzz。这是本课的实战胜利。</li>
   <li>猜一下再验证:<code>for i, c := range "go语言"</code> 里,循环跑几次、<code>c</code>是什么类型?(提示:range 字符串按 rune 走)</li>
 </ol>
 
 <details>
-  <summary>第 4 步期望输出(先猜完再看)</summary>
-  <pre><code>循环 4 次;c 是 rune(int32)
-i 的值:0 1 2 5("语"和"言"各占 3 个字节,索引按字节推进:语从 2 开始,言从 5 开始)</code></pre>
-  <p>range 字符串返回"字节索引 + rune"。索引跳字节、值是码点——这是 Go 处理 Unicode 比 JS 干净的地方,也是最容易惊讶的地方。</p>
+  <summary>第 2、3 步参考答案(先自己完成再看)</summary>
+  <p><strong>第 2 步:</strong><code>if (x &gt; 10)</code> 能编译,但 Go 代码通常省略这层括号。range 中声明了索引却不用会报 <code>declared and not used: i</code>;改为 <code>for _, value := range values</code>。</p>
+  <p><strong>FizzBuzz 参考实现:</strong></p>
+  <pre><code class="language-go">for i := 1; i &lt;= 15; i++ {
+    switch {
+    case i%15 == 0:
+        fmt.Println("FizzBuzz")
+    case i%3 == 0:
+        fmt.Println("Fizz")
+    case i%5 == 0:
+        fmt.Println("Buzz")
+    default:
+        fmt.Println(i)
+    }
+}</code></pre>
+  <p>同时整除的分支要放在最前面;否则 15 会先命中 <code>i%3 == 0</code>。</p>
 </details>
 
-<h2>小测验(点选项,立刻得到反馈)</h2>
+<details>
+  <summary>第 4 步期望输出(先猜完再看)</summary>
+  <pre><code class="language-plaintext">循环 4 次;c 是 rune(int32)
+i 的值:0 1 2 5("语"和"言"各占 3 个字节,索引按字节推进:语从 2 开始,言从 5 开始)</code></pre>
+  <p>range 字符串返回"字节索引 + rune"。索引跳字节、值是码点。这是 Go 处理 Unicode 比 JS 干净的地方,也是最容易惊讶的地方。</p>
+</details>
+
+</section>
+
+<section class="lesson-section lesson-section--action" aria-labelledby="review">
+<h2 id="review">阶段复习：从空文件独立写</h2>
+
+<p>新建一个 <code>review.go</code>,不要复制现有 demo。用前三课的知识完成下面任务:</p>
+
+<ol>
+  <li>声明常量 <code>limit = 10</code>,再声明一个零值为 0 的整数 <code>sum</code>。</li>
+  <li>用三段式 for 遍历 1 到 limit。</li>
+  <li>用无条件 switch 打印每个数是“奇数”还是“偶数”,并把偶数累加到 sum。</li>
+  <li>循环结束后打印 <code>偶数之和: 30</code>。</li>
+</ol>
+
+<details>
+  <summary>阶段复习参考代码(独立写完再看)</summary>
+  <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    const limit = 10
+    var sum int
+
+    for i := 1; i &lt;= limit; i++ {
+        switch {
+        case i%2 == 0:
+            fmt.Println(i, "偶数")
+            sum += i
+        default:
+            fmt.Println(i, "奇数")
+        }
+    }
+
+    fmt.Println("偶数之和:", sum)
+}</code></pre>
+</details>
+
+</section>
+
+<section class="lesson-section lesson-section--action lesson-section--quiz" aria-labelledby="quiz">
+<h2 id="quiz">小测验</h2>
+<p class="section-intro">选择答案后会立即看到反馈与解释。</p>
 
 <div class="quiz" data-explain="Go 只保留 for:for cond {} 即 while,for {} 即 while(true)。">
   <p class="quiz-q">1. Go 里怎么写 while(n &lt; 100) 循环?</p>
@@ -253,7 +424,7 @@ i 的值:0 1 2 5("语"和"言"各占 3 个字节,索引按字节推进:语从 2 
     <button class="quiz-opt"><code>loop n &lt; 100</code></button>
     <button class="quiz-opt"><code>do n &lt; 100</code></button>
   </div>
-  <p class="quiz-feedback"></p>
+  <p class="quiz-feedback" aria-live="polite"></p>
 </div>
 
 <div class="quiz" data-explain="case 匹配后自动 break;要贯穿必须显式写 fallthrough。">
@@ -264,7 +435,7 @@ i 的值:0 1 2 5("语"和"言"各占 3 个字节,索引按字节推进:语从 2 
     <button class="quiz-opt">报运行时错误</button>
     <button class="quiz-opt">执行全部分支</button>
   </div>
-  <p class="quiz-feedback"></p>
+  <p class="quiz-feedback" aria-live="polite"></p>
 </div>
 
 <div class="quiz" data-explain="val 的作用域仅限 if/else 块;出了块就编译错误。">
@@ -275,7 +446,7 @@ i 的值:0 1 2 5("语"和"言"各占 3 个字节,索引按字节推进:语从 2 
     <button class="quiz-opt">能,但值清零</button>
     <button class="quiz-opt">能,但变成 nil</button>
   </div>
-  <p class="quiz-feedback"></p>
+  <p class="quiz-feedback" aria-live="polite"></p>
 </div>
 
 <div class="quiz" data-explain="_ 是显式丢弃占位符,专门豁免未使用变量错误。">
@@ -286,7 +457,7 @@ i 的值:0 1 2 5("语"和"言"各占 3 个字节,索引按字节推进:语从 2 
     <button class="quiz-opt"><code>for i, name := range xs</code></button>
     <button class="quiz-opt"><code>for name, i := range xs</code></button>
   </div>
-  <p class="quiz-feedback"></p>
+  <p class="quiz-feedback" aria-live="polite"></p>
 </div>
 
 <div class="quiz" data-explain="Go 没有三元表达式,条件求值一律写 if/else。">
@@ -297,22 +468,31 @@ i 的值:0 1 2 5("语"和"言"各占 3 个字节,索引按字节推进:语从 2 
     <button class="quiz-opt" data-correct>编译直接报错</button>
     <button class="quiz-opt">仅泛型内可用</button>
   </div>
-  <p class="quiz-feedback"></p>
+  <p class="quiz-feedback" aria-live="polite"></p>
 </div>
 
-<h2>本课引用</h2>
+</section>
+
+<section class="lesson-section lesson-section--reference" aria-labelledby="sources">
+<h2 id="sources">参考资料</h2>
 
 <ul>
-  <li><strong>主源(必读):</strong><a href="https://go.dev/tour/flowcontrol/1">A Tour of Go — Flow control</a>,把 For 到 Switch 这 8 小节在浏览器里跑一遍。</li>
-  <li><a href="https://go.dev/tour/flowcontrol/10">A Tour of Go — Switch with no condition</a> — 无条件 switch 的官方示例。</li>
-  <li><a href="https://go.dev/ref/spec#For_statements">Go 语言规范 — For statements</a> — 三种形态的正式定义。</li>
+  <li><strong>主源(必读):</strong><a href="https://go.dev/tour/flowcontrol/1">A Tour of Go: Flow control</a>,把 For 到 Switch 这 8 小节在浏览器里跑一遍。</li>
+  <li><a href="https://go.dev/tour/flowcontrol/10">A Tour of Go: Switch with no condition</a>,无条件 switch 的官方示例。</li>
+  <li><a href="https://go.dev/ref/spec#For_statements">Go 语言规范:For statements</a>,三种形态的正式定义。</li>
   <li>上一课:<a href="0002-variables-and-types.html">第 2 课:变量与类型</a>。</li>
   <li>对照速查:<a href="../reference/0003-control-flow.html">控制流速查表</a>。</li>
 </ul>
 
+</section>
+
+</article>
+
+</main>
+
 <footer class="lesson-footer">
-  <p><strong>有不清楚的地方?</strong>直接问你的 agent 老师——比如"fallthrough 到底什么时候该用"、"range 遍历 map 的顺序"这类问题,它随时可以展开讲。</p>
-  <p>下节课预告:<strong>复合类型 I:数组与 slice</strong>——Go 数组是值类型、slice 才是日常主力,以及 append 背后的扩容故事。</p>
+  <p><strong>有不清楚的地方?</strong>直接问你的 agent 老师。比如"fallthrough 到底什么时候该用"、"range 遍历 map 的顺序"这类问题,它随时可以展开讲。</p>
+  <p>下节课预告:<strong>复合类型 I:数组与 slice</strong>。Go 数组是值类型、slice 才是日常主力,以及 append 背后的扩容故事。</p>
 </footer>
 
 </body>

@@ -3,24 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="面向 TypeScript 与 JavaScript 开发者的 Go 对照课程，从可运行示例开始建立 Go 心智模型。">
+<meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
 <title>Go 学习旅程：课程列表</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../assets/vendor/highlight-github.min.css">
 <link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/vendor/highlight.min.js" defer></script>
+<script src="../assets/highlight-init.js" defer></script>
 </head>
-<body>
+<body class="lesson-page compiler-lesson compiler-index course-index-page">
+
+<a class="skip-link" href="#course-content">跳到课程内容</a>
+
+<nav class="course-nav" aria-label="课程导航">
+  <a class="course-brand" href="0000-course-list.html" aria-current="page">
+    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
+    <span>Golang Journey</span>
+  </a>
+  <div class="course-nav__links">
+    <a href="#course-list"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-application-menu"></use></svg><span>课程</span></a>
+    <a href="../reference/0001-js-go-quick-reference.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-book-open"></use></svg><span>速查</span></a>
+    <a href="0001-hello-world-and-toolchain.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-arrow-right"></use></svg><span>开始学习</span></a>
+  </div>
+</nav>
+
+<main id="course-content" class="course-index-shell">
 
 <header class="lesson-header">
-  <p class="kicker">Golang Journey · 课程总览</p>
-  <h1>Go 学习旅程</h1>
-  <p class="meta">面向 TypeScript / JavaScript 开发者的 Go 对照课程</p>
+  <div class="lesson-header__copy">
+    <p class="kicker">Golang Journey / 课程总览</p>
+    <h1>从 TypeScript 到 Go</h1>
+    <p class="lesson-deck">为 TypeScript / JavaScript 开发者准备的 Go 对照课程。每一课都从熟悉的概念出发，最终落到可运行代码。</p>
+    <p class="meta">
+      <span>3 节基础课程</span>
+      <span>双语代码对照</span>
+      <span>练习与即时测验</span>
+    </p>
+  </div>
+  <div class="syntax-preview compiler-map compiler-map--stack" aria-label="学习路线概览">
+    <p class="compiler-map__label">学习路线</p>
+    <code><strong>01</strong> package main</code>
+    <code><strong>02</strong> value := typed</code>
+    <code><strong>03</strong> for condition { }</code>
+  </div>
+  <div class="goal compiler-goal">
+    <strong>学习方式</strong>
+    <span>按编号依次学习。每课包含概念讲解、TypeScript 对照、可运行示例、练习和小测验。</span>
+  </div>
 </header>
 
-<div class="goal">
-  <strong>学习方式：</strong>按课程编号依次学习。每课包含概念讲解、TypeScript 对照、可运行示例、练习和小测验。
+<section class="course-catalog" aria-labelledby="course-list">
+<div class="section-heading">
+  <p>FOUNDATION / 01 / 03</p>
+  <h2 id="course-list">从运行第一个程序开始</h2>
+  <span>三节课建立 Go 的第一套心智模型。</span>
 </div>
 
-<h2>课程列表</h2>
-
-<table>
+<table class="course-table">
   <thead>
     <tr>
       <th>课程</th>
@@ -31,21 +72,24 @@
   <tbody>
     <tr>
       <td>第 1 课</td>
-      <td><a href="0001-hello-world-and-toolchain.html" target="_blank" rel="noopener noreferrer">把 Go 跑起来</a></td>
+      <td><a href="0001-hello-world-and-toolchain.html">把 Go 跑起来</a></td>
       <td>第一个程序、Go 工具链，以及与 Node.js 工具链的对照</td>
     </tr>
     <tr>
       <td>第 2 课</td>
-      <td><a href="0002-variables-and-types.html" target="_blank" rel="noopener noreferrer">变量与类型</a></td>
+      <td><a href="0002-variables-and-types.html">变量与类型</a></td>
       <td><code>var</code>、<code>:=</code>、<code>const</code>、类型推断、零值和显式类型转换</td>
     </tr>
     <tr>
       <td>第 3 课</td>
-      <td><a href="0003-control-flow.html" target="_blank" rel="noopener noreferrer">控制流</a></td>
+      <td><a href="0003-control-flow.html">控制流</a></td>
       <td><code>if</code> 初始化语句、三种 <code>for</code>、<code>range</code>、不贯穿的 <code>switch</code></td>
     </tr>
   </tbody>
 </table>
+</section>
+
+</main>
 
 <footer class="lesson-footer">
   <p>新的课程会继续按编号添加到此列表。</p>

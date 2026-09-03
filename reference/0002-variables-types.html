@@ -3,18 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Go 变量声明、基础类型、零值、转换与 fmt 调试动词速查表。">
+<meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
 <title>变量与类型速查表</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../assets/vendor/highlight-github.min.css">
 <link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/vendor/highlight.min.js" defer></script>
+<script src="../assets/highlight-init.js" defer></script>
 </head>
-<body>
+<body class="lesson-page compiler-lesson compiler-reference reference-page">
+
+<a class="skip-link" href="#reference-content">跳到速查内容</a>
+
+<nav class="course-nav" aria-label="课程导航">
+  <a class="course-brand" href="../lessons/0000-course-list.html">
+    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
+    <span>Golang Journey</span>
+  </a>
+  <div class="course-nav__links">
+    <a href="../lessons/0000-course-list.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-application-menu"></use></svg><span>课程目录</span></a>
+    <a href="../lessons/0002-variables-and-types.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-book-open"></use></svg><span>相关课程</span></a>
+    <a href="0001-js-go-quick-reference.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-arrow-left"></use></svg><span>上一张</span></a>
+    <a href="0003-control-flow.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-arrow-right"></use></svg><span>下一张</span></a>
+  </div>
+</nav>
+
+<main id="reference-content" class="reference-shell">
 
 <header class="lesson-header">
-  <p class="kicker">Reference 02 · 速查</p>
-  <h1>变量与类型速查表</h1>
-  <p class="meta">第 2 课范围:声明、类型、零值 · 对照基线:TypeScript</p>
+  <div class="lesson-header__copy">
+    <p class="kicker">速查 02 / 变量与类型</p>
+    <h1>变量与类型</h1>
+    <p class="lesson-deck">声明、推断、零值与转换，快速找回 Go 的类型规则</p>
+    <p class="meta"><span>第 2 课范围</span><span>TypeScript 对照</span><span>声明与类型</span></p>
+  </div>
+  <div class="syntax-preview compiler-map compiler-map--stack" aria-label="本页速查概览">
+    <p class="compiler-map__label">快速定位</p>
+    <code><strong>var</strong> x string</code>
+    <code>x <strong>:=</strong> "value"</code>
+    <code><strong>int</strong>(floatValue)</code>
+  </div>
 </header>
 
-<h2>声明方式</h2>
+<article class="lesson-article reference-article">
+
+<section class="reference-section" aria-labelledby="declarations">
+<h2 id="declarations">声明方式</h2>
 
 <table>
   <tr><th>写法</th><th>位置</th><th>TS 对照</th></tr>
@@ -26,7 +62,12 @@
 
 <p>铁律:类型一旦确定不可变;<code>:=</code> 左侧至少要有一个新变量;<code>:=</code> 不能与 <code>const</code> 连用。</p>
 
-<h2>零值(声明不初始化时的默认值)</h2>
+<p><strong>const 对照:</strong>Go 常量必须在编译期确定,并可保持为未类型化常量;TS <code>const</code> 只禁止重新绑定变量,右侧仍可以是运行时对象或函数结果。</p>
+
+</section>
+
+<section class="reference-section" aria-labelledby="zero-values">
+<h2 id="zero-values">零值(声明不初始化时的默认值)</h2>
 
 <table>
   <tr><th>类型</th><th>零值</th></tr>
@@ -35,12 +76,15 @@
   <tr><td><code>float64</code> / <code>float32</code></td><td><code>0.0</code></td></tr>
   <tr><td><code>bool</code></td><td><code>false</code></td></tr>
   <tr><td><code>byte</code> / <code>rune</code></td><td><code>0</code></td></tr>
-  <tr><td>slice / map / 函数 / 指针 / 接口</td><td><code>nil</code>(后续课程展开)</td></tr>
+  <tr><td>slice / map / 函数 / 指针 / 接口</td><td><code>nil</code>(各类型对 nil 支持的操作不同,后续课程展开)</td></tr>
 </table>
 
-<p>对照:TS 中是 <code>undefined</code>;Go 中没有 undefined,变量从出生就有合法值。</p>
+<p>对照:TS 中常见 <code>undefined</code>;Go 零值始终有明确规则,但明确不代表任何操作都安全——例如 nil 指针解引用、向 nil map 写入会 panic。</p>
 
-<h2>基础类型与 TS 对照</h2>
+</section>
+
+<section class="reference-section" aria-labelledby="types">
+<h2 id="types">基础类型与 TS 对照</h2>
 
 <table>
   <tr><th>Go</th><th>TS</th><th>备注</th></tr>
@@ -52,7 +96,10 @@
   <tr><td><code>rune</code></td><td>—</td><td>别名 <code>int32</code>,Unicode 码点;<code>%T</code> 打印显示 <code>int32</code></td></tr>
 </table>
 
-<h2>易错点</h2>
+</section>
+
+<section class="reference-section" aria-labelledby="pitfalls">
+<h2 id="pitfalls">易错点</h2>
 
 <ul>
   <li><strong>未使用的局部变量、未使用的 import</strong> → 编译错误。<code>declared and not used: x</code></li>
@@ -62,7 +109,10 @@
   <li>变量声明了但没初始化是合法的(得到零值)——和 TS 的 "used before assigned" 完全不同。</li>
 </ul>
 
-<h2>调试工具:fmt 动词速查</h2>
+</section>
+
+<section class="reference-section" aria-labelledby="fmt">
+<h2 id="fmt">调试工具:fmt 动词速查</h2>
 
 <table>
   <tr><th>动词</th><th>作用</th><th>示例输出(<code>x := "hi"</code>)</th></tr>
@@ -73,6 +123,12 @@
   <tr><td><code>%f</code></td><td>浮点</td><td>—</td></tr>
   <tr><td><code>%t</code></td><td>布尔</td><td>—</td></tr>
 </table>
+
+</section>
+
+</article>
+
+</main>
 
 <footer class="lesson-footer">
   <p>← <a href="../lessons/0002-variables-and-types.html">回到第 2 课</a> · 代码示例:<a href="../demos/02-variables/vars.go">vars.go</a> / <a href="../demos/02-variables/vars.ts">vars.ts</a></p>

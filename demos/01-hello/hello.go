@@ -3,7 +3,5 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("Hello, Leo!")
-	fmt.Println("I love Typescript")
-	fmt.Println("index")
+	fmt.Println("Hello, Go!")
 }

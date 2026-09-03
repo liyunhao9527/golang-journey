@@ -34,13 +34,14 @@ names.forEach((name, i) => console.log("3a.", i, name));
 for (const name of names) {
   console.log("3b.", name);
 }
-// 对照:Go 的 range "go语言" 按 Unicode 码点走,输出 4 个字符
-for (const c of "go语言") {
-  console.log("3c.", c); // JS 也是码点迭代,但索引会像 Go 一样跳吗?
+// 对照:Go range 与 JS for...of 都按 Unicode 码点迭代;
+// Go 还会给出 UTF-8 字节索引,for...of 不会。
+for (const c of "go语言 🚀") {
+  console.log("3c.", c);
 }
 
 // 4. switch:不写 break 会贯穿 —— Go 正好相反
-const day = "sun";
+const day: string = "sun";
 switch (day) {
   case "sat":
   case "sun":

@@ -13,6 +13,16 @@
 // 行为:答错标红并禁用该选项(可继续尝试),答对标绿、禁用全部并显示解释。
 // 引用方式:<script src="../assets/quiz.js" defer></script>
 (function () {
+  function setFeedback(feedback, iconName, message) {
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    var use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    svg.setAttribute("class", "ip-icon");
+    svg.setAttribute("aria-hidden", "true");
+    use.setAttribute("href", "../assets/icons/icon-park.svg#" + iconName);
+    svg.appendChild(use);
+    feedback.replaceChildren(svg, document.createTextNode(message));
+  }
+
   document.querySelectorAll(".quiz").forEach(function (box) {
     if (!box.classList.contains("quiz")) return;
     var explain = box.getAttribute("data-explain") || "";
@@ -27,12 +37,12 @@
           done = true;
           btn.classList.add("is-correct");
           options.forEach(function (b) { b.disabled = true; });
-          feedback.textContent = "\u2713 \u6b63\u786e!" + (explain ? " " + explain : "");
+          setFeedback(feedback, "ip-check-one", "\u6b63\u786e!" + (explain ? " " + explain : ""));
           feedback.className = "quiz-feedback is-good";
         } else {
           btn.classList.add("is-wrong");
           btn.disabled = true;
-          feedback.textContent = "\u2717 \u4e0d\u5bf9,\u518d\u60f3\u60f3(\u5df2\u6392\u9664\u4e00\u4e2a\u9519\u8bef\u9009\u9879)";
+          setFeedback(feedback, "ip-close-one", "\u4e0d\u5bf9,\u518d\u60f3\u60f3(\u5df2\u6392\u9664\u4e00\u4e2a\u9519\u8bef\u9009\u9879)");
           feedback.className = "quiz-feedback is-bad";
         }
       });

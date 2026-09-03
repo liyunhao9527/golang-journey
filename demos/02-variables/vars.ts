@@ -8,14 +8,26 @@ let short = "短声明"; // 可变变量
 
 console.log(explicit, inferred, short);
 
-// TS 没有"零值":声明但不初始化,得到 undefined
-let s: string;
-let n: number;
-let f: number;
-let ok: boolean;
+// TS 严格模式不允许读取“声明但未赋值”的变量。
+// 显式把 undefined 纳入类型并赋值,既能通过检查,也能观察运行时结果。
+let s: string | undefined = undefined;
+let n: number | undefined = undefined;
+let f: number | undefined = undefined;
+let ok: boolean | undefined = undefined;
 
-// 严格模式下这行会报 "used before assigned",运行时得到 undefined
 console.log(s, n, f, ok); // undefined undefined undefined undefined
 
 // typeof 相当于 Go 的 %T
-console.log(typeof short, typeof n); // string number
+console.log(typeof short, typeof n); // string undefined
+
+// 用 Unicode 码点对照 Go 的 rune
+const r = "a".codePointAt(0)!;
+console.log("'a' 的码点是", r);
+
+// JS/TS 只有 number;Number 是显式转换,Math.trunc 表达截断意图
+const wholeNumber = 3;
+const decimal = Number(wholeNumber);
+const price = 19.9;
+const wholePrice = Math.trunc(price);
+console.log(wholeNumber, typeof wholeNumber, decimal, typeof decimal);
+console.log(price, "->", wholePrice);

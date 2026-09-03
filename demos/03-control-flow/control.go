@@ -50,7 +50,7 @@ func main() {
 	}
 
 	// range 字符串:按 rune 走,索引按字节推进
-	for i, c := range "go语言啊" {
+	for i, c := range "go语言 🚀" {
 		fmt.Printf("3c. byte-index %d: %c %U %d\n", i, c, c, c)
 	}
 
@@ -63,7 +63,7 @@ func main() {
 		fmt.Println("4a. 工作日")
 	}
 
-	// 无条件 switch:当整齐的 if-else 链用(注意 switch 后的分号)
+	// 无条件 switch:当整齐的 if-else 链用
 	score := 87
 	var grade string
 	switch {

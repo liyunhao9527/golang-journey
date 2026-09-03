@@ -3,18 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="JavaScript、TypeScript 与 Go 的工具链和入门语法快速对照。">
+<meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
 <title>JS↔Go 快速对照表</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../assets/vendor/highlight-github.min.css">
 <link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/vendor/highlight.min.js" defer></script>
+<script src="../assets/highlight-init.js" defer></script>
 </head>
-<body>
+<body class="lesson-page compiler-lesson compiler-reference reference-page">
+
+<a class="skip-link" href="#reference-content">跳到速查内容</a>
+
+<nav class="course-nav" aria-label="课程导航">
+  <a class="course-brand" href="../lessons/0000-course-list.html">
+    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
+    <span>Golang Journey</span>
+  </a>
+  <div class="course-nav__links">
+    <a href="../lessons/0000-course-list.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-application-menu"></use></svg><span>课程目录</span></a>
+    <a href="../lessons/0001-hello-world-and-toolchain.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-book-open"></use></svg><span>相关课程</span></a>
+    <a href="0002-variables-types.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-arrow-right"></use></svg><span>下一张</span></a>
+  </div>
+</nav>
+
+<main id="reference-content" class="reference-shell">
 
 <header class="lesson-header">
-  <p class="kicker">Reference 01 · 速查</p>
-  <h1>JS/TS ↔ Go 快速对照表</h1>
-  <p class="meta">随课程持续扩充 · 第 1 课范围:工具链与入门语法</p>
+  <div class="lesson-header__copy">
+    <p class="kicker">速查 01 / 入门与工具链</p>
+    <h1>JS / TS ↔ Go</h1>
+    <p class="lesson-deck">工具链与入门语法，一页完成两种语言的心智切换</p>
+    <p class="meta"><span>持续扩充</span><span>第 1 课范围</span><span>工具链与入门语法</span></p>
+  </div>
+  <div class="syntax-preview compiler-map compiler-map--stack" aria-label="本页速查概览">
+    <p class="compiler-map__label">快速定位</p>
+    <code><strong>node</strong> → go run</code>
+    <code><strong>console.log</strong> → fmt.Println</code>
+    <code><strong>export</strong> → Uppercase</code>
+  </div>
 </header>
 
-<h2>工具链</h2>
+<article class="lesson-article reference-article">
+
+<section class="reference-section" aria-labelledby="toolchain">
+<h2 id="toolchain">工具链</h2>
 
 <table>
   <tr><th>做的事</th><th>JS/TS</th><th>Go</th></tr>
@@ -22,13 +57,17 @@
   <tr><td>编译 / 类型检查</td><td><code>tsc --noEmit</code></td><td><code>go build</code></td></tr>
   <tr><td>格式化</td><td><code>prettier --write</code></td><td><code>go fmt</code></td></tr>
   <tr><td>初始化项目</td><td><code>npm init</code></td><td><code>go mod init &lt;module&gt;</code></td></tr>
-  <tr><td>安装依赖</td><td><code>npm install &lt;pkg&gt;</code></td><td><code>go get &lt;pkg&gt;</code></td></tr>
+  <tr><td>调整模块依赖版本</td><td><code>npm install &lt;pkg&gt;</code></td><td><code>go get &lt;module&gt;@&lt;version&gt;</code></td></tr>
+  <tr><td>安装命令行工具</td><td><code>npm install -g &lt;pkg&gt;</code></td><td><code>go install &lt;pkg&gt;@&lt;version&gt;</code></td></tr>
   <tr><td>整理依赖清单</td><td>—</td><td><code>go mod tidy</code></td></tr>
   <tr><td>跑测试</td><td><code>vitest</code> / <code>jest</code></td><td><code>go test</code></td></tr>
-  <tr><td>产物</td><td><code>dist/</code> + <code>node_modules</code></td><td>单个静态二进制</td></tr>
+  <tr><td>运行所需</td><td>Node.js + 应用代码/依赖</td><td>通常只需匹配目标平台的可执行文件</td></tr>
 </table>
 
-<h2>入门语法</h2>
+</section>
+
+<section class="reference-section" aria-labelledby="syntax">
+<h2 id="syntax">入门语法</h2>
 
 <table>
   <tr><th>主题</th><th>JS/TS</th><th>Go</th></tr>
@@ -45,12 +84,15 @@
   <p><strong>本课重点记忆:</strong><code>'a'</code> 在 Go 里不是字符串——这是前端开发者最常踩的第一个坑,第 2 课讲类型时会展开。</p>
 </blockquote>
 
-<h2>对照代码:Hello World 双版本</h2>
+</section>
+
+<section class="reference-section" aria-labelledby="comparison">
+<h2 id="comparison">对照代码:Hello World 双版本</h2>
 
 <div class="compare">
   <div>
     <p class="lang-label">Go — hello.go</p>
-    <pre><code>package main
+    <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -58,14 +100,24 @@ func main() {
 	fmt.Println("Hello, Go!")
 }</code></pre>
   </div>
+  <div class="translation-rail" aria-label="Go 与 TypeScript 的异同">
+    <span><b>相同点</b>两个版本都会打印同一行文本</span>
+    <span><b>不同点</b>Go 使用 package main 和 main 函数，TypeScript 直接执行顶层代码</span>
+  </div>
   <div>
     <p class="lang-label">TypeScript — hello.ts</p>
-    <pre><code>// 入口是隐式的,顶层代码直接执行
+    <pre><code class="language-typescript">// 入口是隐式的,顶层代码直接执行
 console.log("Hello, Go!");</code></pre>
   </div>
 </div>
 
 <p>本表随课程每课扩充。来源:官方 <a href="https://go.dev/tour/">A Tour of Go</a> 与 <a href="https://gobyexample.com/">Go by Example</a>。</p>
+
+</section>
+
+</article>
+
+</main>
 
 <footer class="lesson-footer">
   <p>← <a href="../lessons/0001-hello-world-and-toolchain.html">回到第 1 课</a></p>

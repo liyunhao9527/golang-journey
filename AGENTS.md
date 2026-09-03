@@ -13,3 +13,7 @@ Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-
 ### Domain docs
 
 Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+### Course design
+
+Creating or revising lessons, demos, exercises, reference pages, navigation, icons, learning progress, or course UI: read `docs/standards/README.md` and follow its task-specific pointers.
