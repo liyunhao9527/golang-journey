@@ -12,7 +12,7 @@ func main() {
 	demoRangeValue()
 	demoRangeString()
 	demoSwitchValue()
-	demoSwitchConditionless()
+	demoSwitchConditionLess()
 }
 
 func demoIfBasic() {
@@ -96,8 +96,8 @@ func demoSwitchValue() {
 	}
 }
 
-func demoSwitchConditionless() {
-	fmt.Println("---------demoSwitchConditionless---------")
+func demoSwitchConditionLess() {
+	fmt.Println("---------demoSwitchConditionLess---------")
 	// 无条件 switch:当整齐的 if-else 链用
 	score := 87
 	var grade string
