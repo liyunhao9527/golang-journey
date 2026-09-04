@@ -3,34 +3,54 @@ package main
 import "fmt"
 
 func main() {
-	// ── 1. if:无括号、花括号必须、可带初始化语句 ─────────────────
+	demoIfBasic()
+	demoIfInit()
+	demoForClassic()
+	demoForWhile()
+	demoForInfinite()
+	demoRangeIndex()
+	demoRangeValue()
+	demoRangeString()
+	demoSwitchValue()
+	demoSwitchConditionless()
+}
+
+func demoIfBasic() {
+	fmt.Println("---------demoIfBasic---------")
 	x := 42
 	if x > 10 {
 		fmt.Println("1a. big")
 	}
+}
 
-	// 带初始化语句:val 只在这个 if/else 块里可见
+func demoIfInit() {
+	fmt.Println("---------demoIfInit---------")
+	x := 42
 	if val := x * 2; val > 100 {
 		fmt.Println("1b. huge:", val)
 	} else {
 		fmt.Println("1b. small:", val)
 	}
-	// fmt.Println(val) // 取消注释 → 编译错误:undefined: val
+}
 
-	// ── 2. for 三种形态 ──────────────────────────────────────────
-	// 形态一:经典三段式
+func demoForClassic() {
+	fmt.Println("---------demoForClassic---------")
 	for i := 0; i < 3; i++ {
 		fmt.Println("2a.", i)
 	}
+}
 
-	// 形态二:while 型(只留条件)
+func demoForWhile() {
+	fmt.Println("---------demoForWhile---------")
 	n := 1
 	for n < 100 {
 		n *= 2
 	}
 	fmt.Println("2b. first power-of-2 >= 100:", n)
+}
 
-	// 形态三:无限循环 + break
+func demoForInfinite() {
+	fmt.Println("---------demoForInfinite---------")
 	count := 0
 	for {
 		count++
@@ -39,30 +59,45 @@ func main() {
 		}
 	}
 	fmt.Println("2c. broke at:", count)
+}
 
-	// ── 3. range 遍历 ────────────────────────────────────────────
+func demoRangeIndex() {
+	fmt.Println("---------demoRangeIndex---------")
 	names := []string{"a", "b", "c"}
 	for i, name := range names {
 		fmt.Println("3a.", i, name)
 	}
-	for _, name := range names { // _ 显式丢弃索引
+}
+
+func demoRangeValue() {
+	fmt.Println("---------demoRangeValue---------")
+	names := []string{"a", "b", "c"}
+	for _, name := range names {
 		fmt.Println("3b.", name)
 	}
+}
 
+func demoRangeString() {
+	fmt.Println("---------demoRangeString---------")
 	// range 字符串:按 rune 走,索引按字节推进
 	for i, c := range "go语言 🚀" {
 		fmt.Printf("3c. byte-index %d: %c %U %d\n", i, c, c, c)
 	}
+}
 
-	// ── 4. switch:默认不贯穿 ────────────────────────────────────
+func demoSwitchValue() {
+	fmt.Println("---------demoSwitchValue---------")
 	day := "sun"
 	switch day {
-	case "sat", "sun": // 多值共用一个 case
+	case "sat", "sun":
 		fmt.Println("4a. 周末")
 	default:
 		fmt.Println("4a. 工作日")
 	}
+}
 
+func demoSwitchConditionless() {
+	fmt.Println("---------demoSwitchConditionless---------")
 	// 无条件 switch:当整齐的 if-else 链用
 	score := 87
 	var grade string
