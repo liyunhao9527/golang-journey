@@ -12,6 +12,29 @@ if (val > 100) {
   console.log("1b. small:", val);
 }
 
+// 多个条件与短路求值
+const age = 20;
+const hasTicket = true;
+const isMember = false;
+const isBanned = false;
+
+if (age >= 18 && hasTicket) {
+  console.log("成年且有票");
+}
+if (hasTicket || isMember) {
+  console.log("有票或是会员");
+}
+if ((hasTicket || isMember) && !isBanned) {
+  console.log("可以入场");
+}
+
+const divisor = 0;
+if (divisor !== 0 && 10 / divisor > 1) {
+  console.log("商大于 1");
+} else {
+  console.log("除数为 0 或商不大于 1");
+}
+
 // 2. 循环
 for (let i = 0; i < 3; i++) {
   console.log("2a.", i);

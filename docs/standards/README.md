@@ -6,7 +6,7 @@
 
 | 任务 | 必读文档 |
 |---|---|
-| 编写或修改课程内容、练习、测验、演示代码 | [产品与文案](product-and-language.md)、[课程内容](course-content.md) |
+| 编写或修改课程正文、速查内容、代码示例、练习、测验、演示代码 | [产品与文案](product-and-language.md)、[课程内容](course-content.md) |
 | 新建或调整课程页面、课程首页、速查页 | [视觉系统](visual-system.md)、[页面结构](page-contracts.md) |
 | 添加图标或交互反馈 | [视觉系统](visual-system.md) |
 | 完成任何课程或界面改动 | [质量门槛](quality-gate.md) |

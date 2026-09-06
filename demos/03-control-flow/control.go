@@ -4,6 +4,7 @@ import "fmt"
 
 func main() {
 	demoIfBasic()
+	demoIfConditions()
 	demoIfInit()
 	demoForClassic()
 	demoForWhile()
@@ -20,6 +21,30 @@ func demoIfBasic() {
 	x := 42
 	if x > 10 {
 		fmt.Println("1a. big")
+	}
+}
+
+func demoIfConditions() {
+	age := 20
+	hasTicket := true
+	isMember := false
+	isBanned := false
+
+	if age >= 18 && hasTicket {
+		fmt.Println("成年且有票")
+	}
+	if hasTicket || isMember {
+		fmt.Println("有票或是会员")
+	}
+	if (hasTicket || isMember) && !isBanned {
+		fmt.Println("可以入场")
+	}
+
+	divisor := 0
+	if divisor != 0 && 10/divisor > 1 {
+		fmt.Println("商大于 1")
+	} else {
+		fmt.Println("除数为 0 或商不大于 1")
 	}
 }
 

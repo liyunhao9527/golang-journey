@@ -6,7 +6,7 @@ $htmlFiles = @("lessons", "reference") |
   ForEach-Object { Get-ChildItem (Join-Path $repoRoot $_) -Filter "*.html" }
 
 $failures = [System.Collections.Generic.List[string]]::new()
-$themeHref = '<link rel="stylesheet" href="../assets/vendor/highlight-github.min.css">'
+$themeHref = '<link rel="stylesheet" href="../assets/vendor/highlight-monokai.css">'
 $librarySrc = '<script src="../assets/vendor/highlight.min.js" defer></script>'
 $initializerSrc = '<script src="../assets/highlight-init.js" defer></script>'
 
@@ -32,7 +32,7 @@ foreach ($htmlFile in $htmlFiles) {
 
 $requiredAssets = @(
   (Join-Path $repoRoot "assets/vendor/highlight.min.js"),
-  (Join-Path $repoRoot "assets/vendor/highlight-github.min.css"),
+  (Join-Path $repoRoot "assets/vendor/highlight-monokai.css"),
   (Join-Path $repoRoot "assets/highlight-init.js")
 )
 

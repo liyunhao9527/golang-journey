@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
 <title>速查:控制流(if / for / range / switch)</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="../assets/vendor/highlight-github.min.css">
+<link rel="stylesheet" href="../assets/vendor/highlight-monokai.css">
 <link rel="stylesheet" href="../assets/style.css">
 <script src="../assets/vendor/highlight.min.js" defer></script>
 <script src="../assets/highlight-init.js" defer></script>
@@ -67,14 +67,35 @@
 
 </section>
 
+<section class="reference-section" aria-labelledby="if-conditions">
+<h2 id="if-conditions">if 多个条件与短路求值</h2>
+<table>
+  <tr><th>用途</th><th>Go / TypeScript 表达式</th></tr>
+  <tr><td>两个条件都成立</td><td><code>age &gt;= 18 &amp;&amp; hasTicket</code></td></tr>
+  <tr><td>至少一个条件成立</td><td><code>hasTicket || isMember</code></td></tr>
+  <tr><td>取反</td><td><code>!isBanned</code></td></tr>
+  <tr><td>组合条件</td><td><code>(hasTicket || isMember) &amp;&amp; !isBanned</code></td></tr>
+</table>
+<p><strong>相同点：</strong>优先级为 <code>!</code> &gt; <code>&amp;&amp;</code> &gt; <code>||</code>；先计算左边，<code>&amp;&amp;</code> 左边为假、<code>||</code> 左边为真时跳过右边。</p>
+<p><strong>不同点：</strong>Go 的条件和逻辑操作数必须是布尔值，不能写 <code>if name {}</code>，要写 <code>if name != "" {}</code>。JS/TS 可做真值判断，且 <code>&amp;&amp;</code>、<code>||</code> 返回其中一个操作数。</p>
+<p>下面是函数体内的片段：<code>:=</code> 和 <code>if</code> 不能直接写在包级作用域。包级变量声明使用 <code>var</code>。</p>
+<pre><code class="language-go">divisor := 0
+if divisor != 0 &amp;&amp; 10/divisor &gt; 1 {
+  fmt.Println("商大于 1")
+} else {
+  fmt.Println("除数为 0 或商不大于 1")
+}</code></pre>
+<p>先检查除数，短路跳过整数除零。完整对照与分组练习见<a href="../lessons/0003-control-flow.html#if-conditions">第三课：多个条件</a>。</p>
+</section>
+
 <section class="reference-section" aria-labelledby="if-init">
 <h2 id="if-init">if 带初始化:作用域最小化</h2>
 
 <pre><code class="language-go">// val 只在 if/else 块内可见,出块即消失
 if val := compute(); val &gt; 100 {
-    use(val)
+  use(val)
 } else {
-    use(val * 2) // else 里也能用
+  use(val * 2) // else 里也能用
 }
 // val 在这里不存在(编译错误)</code></pre>
 
@@ -116,11 +137,11 @@ for k, v := range map {}     // 键 + 值(顺序未指定,不要依赖)</code></
 
 <pre><code class="language-go">switch {                // 无条件:按顺序找第一个为真的 case
 case score &gt;= 90:
-    grade = "A"
+  grade = "A"
 case score &gt;= 80:
-    grade = "B"
+  grade = "B"
 default:
-    grade = "C"
+  grade = "C"
 }</code></pre>
 
 </section>

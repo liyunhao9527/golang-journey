@@ -16,13 +16,15 @@
 
 | Token | 浅色值 | 用途 |
 |---|---:|---|
-| `--compiler-ink` | `#102129` | 主文字、品牌标记、代码底色 |
+| `--compiler-ink` | `#102129` | 主文字、品牌标记 |
 | `--compiler-paper` | `#fbfdfc` | 阅读卡片 |
 | `--compiler-fog` | `#e7eef1` | 页面背景 |
 | `--compiler-go` | `#007e9e` | Go、当前状态、主要强调 |
 | `--compiler-go-dark` | `#006b87` | 浅色背景上的链接与小文字 |
 | `--compiler-ts` | `#647782` | TypeScript 次级标识 |
 | `--compiler-rule` | `#bfcbd0` | 边框和分隔线 |
+
+代码块使用本地 Highlight.js Monokai 主题（`assets/vendor/highlight-monokai.css`），浅色与暗色模式统一使用 `#272822` 底色和 `#ddd` 默认文字色。语法颜色由主题文件维护，不在共享样式中覆盖。网页代码示例每级缩进使用 2 个空格，制表符显示宽度也设为 2；可运行 Go 源文件继续遵循 `gofmt`。
 
 只使用一个主要强调色 Go 青色。TypeScript 使用中性蓝灰，不与主要操作争夺注意力。
 

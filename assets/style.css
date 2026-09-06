@@ -66,6 +66,7 @@ code {
 }
 
 pre {
+  tab-size: 2;
   background: var(--code-bg);
   border: 1px solid var(--rule);
   border-radius: 6px;
@@ -206,9 +207,9 @@ footer.lesson-footer {
   --learning: #b96a16;
   --learning-soft: #fff3df;
   --rule: #d9e3e8;
-  --code-surface: #101c24;
-  --code-surface-soft: #152630;
-  --code-ink: #dce8ec;
+  --code-surface: #272822;
+  --code-surface-soft: #34352f;
+  --code-ink: #ddd;
   --success: #19724c;
   --success-bg: #e4f3eb;
   --danger: #a33f46;
@@ -486,15 +487,6 @@ footer.lesson-footer {
 .lesson-page pre code, .lesson-page pre code.hljs {
   padding: 0; border-radius: 0; background: transparent; color: inherit;
 }
-.lesson-page .hljs-comment, .lesson-page .hljs-quote { color: #7f98a4; }
-.lesson-page .hljs-keyword, .lesson-page .hljs-selector-tag,
-.lesson-page .hljs-type, .lesson-page .hljs-built_in { color: #65cbe4; }
-.lesson-page .hljs-string, .lesson-page .hljs-title,
-.lesson-page .hljs-section { color: #acd58f; }
-.lesson-page .hljs-number, .lesson-page .hljs-literal,
-.lesson-page .hljs-symbol { color: #e6bb72; }
-.lesson-page .hljs-function, .lesson-page .hljs-variable,
-.lesson-page .hljs-params { color: #dce8ec; }
 .lesson-page .compare {
   display: grid; grid-template-columns: minmax(0, 1fr);
   gap: 1rem; width: 100%; margin: 1.8rem 0 2.7rem;
@@ -594,7 +586,7 @@ body.lesson-page > footer.lesson-footer p {
     --surface-blue: #122c36; --ink: #e6eff2; --muted: #9babb2;
     --primary: #53c3df; --primary-hover: #77d1e7; --primary-soft: #163641;
     --learning: #efb461; --learning-soft: #392a18; --rule: #293942;
-    --code-surface: #081117; --code-surface-soft: #0e1b22; --code-ink: #dce8ec;
+    --code-surface: #272822; --code-surface-soft: #34352f; --code-ink: #ddd;
     --success: #7bc79d; --success-bg: #173629;
     --danger: #eda1a6; --danger-bg: #3a2428;
   }
@@ -786,8 +778,8 @@ body.lesson-page > footer.lesson-footer p {
   --primary-hover: var(--compiler-go-dark);
   --primary-soft: #dceff3;
   --rule: var(--compiler-rule);
-  --code-surface: var(--compiler-ink);
-  --code-surface-soft: #152a34;
+  --code-surface: #272822;
+  --code-surface-soft: #34352f;
 }
 
 .compiler-lesson .course-nav {
@@ -1205,8 +1197,8 @@ body.lesson-page > footer.lesson-footer p {
     --primary-hover: var(--compiler-go-dark);
     --primary-soft: #173640;
     --rule: var(--compiler-rule);
-    --code-surface: #081116;
-    --code-surface-soft: #102028;
+    --code-surface: #272822;
+    --code-surface-soft: #34352f;
   }
 
   .compiler-lesson .course-nav { background: rgb(12 23 29 / 0.96); }
