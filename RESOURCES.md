@@ -10,6 +10,8 @@
   官方风格与惯用法指南。用:学完基础后过一遍,理解 Go 的"地道写法"。
 - [Go 官方文档](https://go.dev/doc/)
   安装、规范、教程入口。用:任何语法细节以官方 spec 为准。
+- [Go Slices: usage and internals(官方博客)](https://go.dev/blog/slices-intro)
+  解释 slice 描述符、底层数组、长度、容量与 append。用:数组与 slice 课程的共享存储和增长心智模型。
 - [The Go Programming Language(书)](https://www.gopl.io/)
   Go 之父参与的权威教材。用:系统阅读,与课程互补。
 - [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests)

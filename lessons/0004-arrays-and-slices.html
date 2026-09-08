@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="用 TypeScript 对照学习 Go 数组与 slice，理解值复制、共享底层数组、容量、append 和独立复制。">
+<meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
+<title>第 4 课：数组与 slice | 值、视图与扩容</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../assets/vendor/highlight-monokai.css">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/vendor/highlight.min.js" defer></script>
+<script src="../assets/highlight-init.js" defer></script>
+<script src="../assets/quiz.js" defer></script>
+</head>
+<body class="lesson-page compiler-lesson">
+
+<a class="skip-link" href="#lesson-content">跳到正文</a>
+
+<nav class="course-nav" aria-label="课程导航">
+  <a class="course-brand" href="0000-course-list.html">
+    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
+    <span>Golang Journey</span>
+  </a>
+  <div class="course-nav__links">
+    <a href="0000-course-list.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-application-menu"></use></svg><span>课程目录</span></a>
+    <a href="0003-control-flow.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-arrow-left"></use></svg><span>上一课</span></a>
+    <a href="../reference/0004-arrays-slices.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-book-open"></use></svg><span>本课速查</span></a>
+  </div>
+</nav>
+
+<main id="lesson-content" class="lesson-shell">
+
+<header class="lesson-header">
+  <div class="lesson-header__copy">
+    <p class="kicker">第 4 课 / 复合类型</p>
+    <h1>数组与 slice</h1>
+    <p class="lesson-deck">先分清“整份值”与“共享视图”，再安全地增删和复制序列</p>
+    <p class="meta">
+      <span><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-time"></use></svg>约 18 分钟</span>
+      <span>TypeScript 对照</span>
+      <a href="https://go.dev/tour/moretypes/6">主源：A Tour of Go<svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-link-out"></use></svg></a>
+    </p>
+  </div>
+  <div class="syntax-preview compiler-map" aria-label="TypeScript 与 Go 的本课语法对照">
+    <p class="compiler-map__label">本课对照</p>
+    <div class="compiler-map__row">
+      <code><span>TS</span> const xs = [1, 2]</code>
+      <i aria-hidden="true">↳</i>
+      <code><span>GO</span> xs := []int{1, 2}</code>
+    </div>
+    <div class="compiler-map__row">
+      <code><span>TS</span> xs.slice(1, 3)</code>
+      <i aria-hidden="true">↳</i>
+      <code><span>GO</span> xs[1:3]</code>
+    </div>
+    <div class="compiler-map__row">
+      <code><span>TS</span> xs.push(value)</code>
+      <i aria-hidden="true">↳</i>
+      <code><span>GO</span> xs = append(xs, value)</code>
+    </div>
+    <p class="compiler-map__mobile"><code>[N]T</code> 是数组 · <code>[]T</code> 是 slice · <code>append</code> 要接住返回值</p>
+  </div>
+  <div class="goal compiler-goal">
+    <strong>本课目标</strong>
+    <span>完成本课后，你能解释数组赋值与 slice 赋值的存储差异，用 <code>len</code> / <code>cap</code> 判断可见范围与容量，用 <code>append</code> 扩展 slice，并用 <code>make</code> + <code>copy</code> 得到独立副本。</span>
+  </div>
+</header>
+
+<aside class="lesson-rail">
+  <div class="lesson-rail__inner">
+    <p class="lesson-rail__label">本课目录</p>
+    <nav class="lesson-outline" aria-label="本课目录">
+      <a href="#array"><strong>数组</strong><span>长度属于类型</span></a>
+      <a href="#slice"><strong>slice</strong><span>共享底层数组</span></a>
+      <a href="#append"><strong>append</strong><span>长度、容量与扩展</span></a>
+      <a href="#copy"><strong>copy</strong><span>创建独立副本</span></a>
+      <a href="#practice"><strong>练习</strong><span>建立课程播放列表</span></a>
+    </nav>
+    <div class="lesson-rail__meta">
+      <span>阅读约 18 分钟</span>
+      <span>4 道随堂测验</span>
+    </div>
+    <div class="lesson-progress" aria-label="Go 学习旅程进度：已到第 4 课，共 4 课">
+      <span><strong>04</strong> / 04</span>
+      <i aria-hidden="true"><b></b></i>
+      <small>复合类型 · 当前课</small>
+    </div>
+  </div>
+</aside>
+
+<article class="lesson-article">
+
+<section class="lesson-section lesson-section--concept" aria-labelledby="array">
+<h2 id="array">数组：长度属于类型，赋值会复制</h2>
+
+<p>先看结论：<code>[3]string</code> 是“恰好 3 个字符串”的数组类型，长度不能在运行时改变。<code>[3]string</code> 与 <code>[4]string</code> 是不同类型。数组变量保存整份数组值，因此赋值给另一个变量时会复制全部元素。</p>
+
+<p>下面两段都是完整程序。把 Go 代码保存为 <code>main.go</code>，在该文件目录运行 <code>go run main.go</code>；把 TypeScript 代码保存为 <code>main.ts</code>，用本机 TypeScript 运行环境执行。两段程序故意展示不同的默认赋值语义。</p>
+
+<div class="compare">
+  <div>
+    <p class="lang-label">Go / main.go</p>
+    <pre><code class="language-go" data-example="go-array-copy">package main
+
+import "fmt"
+
+func main() {
+  languages := [3]string{"TypeScript", "Go", "Rust"}
+  copied := languages
+  copied[0] = "JavaScript"
+
+  fmt.Println("original:", languages)
+  fmt.Println("copied:  ", copied)
+}</code></pre>
+  </div>
+  <div class="translation-rail" aria-label="Go 与 TypeScript 的异同">
+    <span><b>相同点</b>两种语言都能在类型层表达三个字符串槽位</span>
+    <span><b>不同点</b>Go 数组赋值复制元素；TypeScript 数组或 tuple 赋值复制的是引用</span>
+  </div>
+  <div>
+    <p class="lang-label">TypeScript / main.ts</p>
+    <pre><code class="language-typescript">const languages: [string, string, string] = [
+  "TypeScript",
+  "Go",
+  "Rust",
+];
+const alias = languages;
+alias[0] = "JavaScript";
+
+console.log("original:", languages);
+console.log("alias:   ", alias);</code></pre>
+  </div>
+</div>
+
+<p>Go 程序输出：</p>
+
+<pre><code class="language-plaintext">original: [TypeScript Go Rust]
+copied:   [JavaScript Go Rust]</code></pre>
+
+<p>TypeScript 中若想得到独立的浅副本，要显式写 <code>const copied = [...languages]</code>。Go 日常处理长度会变化的序列时通常不直接用数组，而是使用下一节的 slice。</p>
+</section>
+
+<section class="lesson-section lesson-section--concept" aria-labelledby="slice">
+<h2 id="slice">slice：一段底层数组的描述符</h2>
+
+<p><code>[]string</code> 是 slice 类型，方括号内没有长度。slice 自身可以理解为一份小描述符：它记录当前可见片段、长度和容量，并让你访问某个底层数组。slice 赋值会复制描述符，不会复制元素；两个 slice 因此可能共享同一份存储。</p>
+
+<p>下面是完整程序，可保存为 <code>main.go</code> 并运行 <code>go run main.go</code>：</p>
+
+<div class="compare">
+  <div>
+    <p class="lang-label">Go</p>
+    <pre><code class="language-go" data-example="go-slice-view">package main
+
+import "fmt"
+
+func main() {
+  languages := []string{"TypeScript", "Go", "Rust"}
+  view := languages[1:3]
+  view[0] = "Golang"
+
+  fmt.Println("slice:", languages)
+  fmt.Println("view: ", view)
+}</code></pre>
+  </div>
+  <div class="translation-rail" aria-label="Go 与 TypeScript 的异同">
+    <span><b>相同点</b>两种语言都用“起点包含、终点不包含”的区间</span>
+    <span><b>不同点</b>Go 切片表达式共享元素存储；TypeScript 的 <code>slice()</code> 返回浅拷贝</span>
+  </div>
+  <div>
+    <p class="lang-label">TypeScript</p>
+    <pre><code class="language-typescript">const languages = ["TypeScript", "Go", "Rust"];
+const rangeCopy = languages.slice(1, 3);
+rangeCopy[0] = "Golang";
+
+console.log("array:     ", languages);
+console.log("range copy:", rangeCopy);</code></pre>
+  </div>
+</div>
+
+<p>Go 的 <code>view[0]</code> 和 <code>languages[1]</code> 是同一个底层数组元素，所以 Go 输出 <code>slice: [TypeScript Golang Rust]</code>。TypeScript 的 <code>slice(1, 3)</code> 会创建一个新数组，修改 <code>rangeCopy</code> 不会替换原数组槽位。</p>
+
+<h3>零值 slice 可以直接 append</h3>
+
+<p>slice 延续了第 2 课的零值模型。未初始化的 slice 零值是 <code>nil</code>，其长度和容量都是 0；读取长度、<code>range</code> 遍历以及 <code>append</code> 都可安全使用。注意：这不代表对 <code>nil</code> slice 的任何操作都安全，直接访问 <code>numbers[0]</code> 仍会越界 panic。</p>
+
+<p>下面是 <code>main</code> 函数体内的局部片段，可替换上一段 Go 程序的函数体：</p>
+
+<pre><code class="language-go">var numbers []int
+fmt.Println(numbers == nil, len(numbers), cap(numbers))
+
+numbers = append(numbers, 42)
+fmt.Println(numbers)</code></pre>
+
+<pre><code class="language-plaintext">true 0 0
+[42]</code></pre>
+
+<p><code>[]int{}</code> 则是非 <code>nil</code> 的空 slice，长度同样是 0。多数追加和遍历代码不需要区分两者；当 JSON 等外部格式区分 <code>null</code> 与空数组时再明确选择。</p>
+</section>
+
+<section class="lesson-section lesson-section--concept" aria-labelledby="append">
+<h2 id="append">len、cap 与 append：可见长度不等于容量</h2>
+
+<ul>
+  <li><code>len(s)</code>：当前可以索引和遍历的元素数。</li>
+  <li><code>cap(s)</code>：从 slice 起点到底层数组末尾，最多可延展到的元素数。</li>
+  <li><code>append(s, value)</code>：返回扩展后的 slice，必须接住返回值。</li>
+</ul>
+
+<div class="compare">
+  <div>
+    <p class="lang-label">Go / main 函数体内</p>
+    <pre><code class="language-go">topics := make([]string, 0, 3)
+topics = append(topics, "变量", "控制流")
+
+fmt.Println(topics)
+fmt.Println(len(topics), cap(topics))</code></pre>
+  </div>
+  <div class="translation-rail" aria-label="Go 与 TypeScript 的异同">
+    <span><b>相同点</b>两种写法都在序列末尾加入元素</span>
+    <span><b>不同点</b>Go 的 <code>append</code> 返回 slice；TypeScript 的 <code>push</code> 原地修改数组并返回新长度</span>
+  </div>
+  <div>
+    <p class="lang-label">TypeScript / 脚本顶层</p>
+    <pre><code class="language-typescript">const topics: string[] = [];
+const newLength = topics.push("变量", "控制流");
+
+console.log(topics);
+console.log(newLength);</code></pre>
+  </div>
+</div>
+
+<p><code>make([]string, 0, 3)</code> 创建长度 0、容量 3 的 slice；三个槽位已经分配，但当前还不能用索引访问。前两次追加可以复用这份容量。</p>
+
+<blockquote>
+  <p><strong>为什么必须写回？</strong>容量足够时，<code>append</code> 会复用底层数组；容量不足时，它会分配新数组并返回指向新存储的 slice。调用者不能依赖某一次追加究竟走哪条路径，所以始终写 <code>s = append(s, value)</code>。</p>
+</blockquote>
+
+<p>完整的容量演示在 <a href="../demos/04-arrays-slices/arrays_slices.go">arrays_slices.go</a> 的 <code>demoAppendCapacity</code>。从仓库根目录运行：</p>
+
+<pre><code class="language-bash">go run demos/04-arrays-slices/arrays_slices.go</code></pre>
+
+<p>其中关键输出如下。第一次追加仍在容量 3 内，所以旧视图看到修改；第二次追加超出容量，返回的新 slice 与旧视图分离：</p>
+
+<pre><code class="language-plaintext">within capacity: [JavaScript Go Rust]
+after growth:    [TS Go Rust Python]
+old storage:     [JavaScript Go Rust]</code></pre>
+
+<details>
+  <summary>动手验证：如果忽略 append 的返回值呢？</summary>
+  <p>在 sandbox 中运行下面这个完整的<strong>预期编译错误</strong>程序。编译器会报告 <code>append(topics, "slice") (value of type []string) is not used</code>，因为追加结果没有被使用。</p>
+  <pre><code class="language-go" data-example="go-append-error">package main
+
+import "fmt"
+
+func main() {
+  topics := make([]string, 0, 1)
+  append(topics, "slice")
+  fmt.Println(topics)
+}</code></pre>
+  <p><strong>恢复步骤：</strong>改成 <code>topics = append(topics, "slice")</code>，再次运行应成功输出 <code>[slice]</code>。</p>
+</details>
+</section>
+
+<section class="lesson-section lesson-section--concept" aria-labelledby="copy">
+<h2 id="copy">make + copy：需要独立数据时明确复制</h2>
+
+<p><code>cloned := original</code> 只复制 slice 描述符。要复制元素，先用 <code>make</code> 创建目标长度，再用 <code>copy</code> 搬运。<code>copy(dst, src)</code> 返回实际复制的元素数，即两边长度的较小值。</p>
+
+<div class="compare">
+  <div>
+    <p class="lang-label">Go / main 函数体内</p>
+    <pre><code class="language-go">original := []int{1, 2, 3}
+cloned := make([]int, len(original))
+copied := copy(cloned, original)
+cloned[0] = 99
+
+fmt.Println(copied)
+fmt.Println(original)
+fmt.Println(cloned)</code></pre>
+  </div>
+  <div class="translation-rail" aria-label="Go 与 TypeScript 的异同">
+    <span><b>相同点</b>两种写法都创建新的序列容器并浅复制元素</span>
+    <span><b>不同点</b>Go 先分配目标 slice 再 <code>copy</code>；TypeScript 常用展开语法一步完成</span>
+  </div>
+  <div>
+    <p class="lang-label">TypeScript / 脚本顶层</p>
+    <pre><code class="language-typescript">const original = [1, 2, 3];
+const cloned = [...original];
+cloned[0] = 99;
+
+console.log(original);
+console.log(cloned);</code></pre>
+  </div>
+</div>
+
+<p>两种语言这里做的都是<strong>浅复制</strong>：元素如果自身包含 map、slice、对象或其他共享数据，复制外层序列并不会递归复制内部数据。</p>
+</section>
+
+<section class="lesson-section lesson-section--action" aria-labelledby="practice">
+<h2 id="practice">动手练习：课程播放列表</h2>
+
+<p>在 <code>demos/04-arrays-slices/sandbox/playlist.go</code> 从空文件独立完成下面任务：</p>
+
+<ol>
+  <li>写出完整的 <code>package main</code>、<code>import "fmt"</code> 和 <code>func main()</code>。</li>
+  <li>创建 <code>topics := []string{"Go", "并发", "HTTP"}</code>。</li>
+  <li>用 <code>make</code> + <code>copy</code> 创建独立的 <code>backup</code>。</li>
+  <li>创建 <code>today := topics[:2]</code>，把 <code>today[1]</code> 改为 <code>"slice"</code>。</li>
+  <li>给 <code>topics</code> 追加 <code>"测试"</code>，并把返回值写回。</li>
+  <li>打印 <code>topics</code>、<code>today</code>、<code>backup</code> 以及 <code>len(topics)</code>。</li>
+</ol>
+
+<p><strong>成功条件：</strong>从仓库根目录运行 <code>go run demos/04-arrays-slices/sandbox/playlist.go</code>，输出必须与下面一致。<code>today</code> 的修改影响 <code>topics</code>，但不影响独立副本 <code>backup</code>。</p>
+
+<pre><code class="language-plaintext">topics: [Go slice HTTP 测试]
+today: [Go slice]
+backup: [Go 并发 HTTP]
+length: 4</code></pre>
+
+<details>
+  <summary>练习参考答案与关键解释</summary>
+  <pre><code class="language-go" data-example="go-playlist">package main
+
+import "fmt"
+
+func main() {
+  topics := []string{"Go", "并发", "HTTP"}
+
+  backup := make([]string, len(topics))
+  copy(backup, topics)
+
+  today := topics[:2]
+  today[1] = "slice"
+  topics = append(topics, "测试")
+
+  fmt.Println("topics:", topics)
+  fmt.Println("today:", today)
+  fmt.Println("backup:", backup)
+  fmt.Println("length:", len(topics))
+}</code></pre>
+  <p><code>today</code> 与 <code>topics</code> 共享前两个元素，所以修改会联动；<code>backup</code> 的元素已经复制到新底层数组。<code>append</code> 的返回值写回后，<code>topics</code> 才拥有长度 4。</p>
+</details>
+
+<h3>阶段复习：从空文件重建前三课</h3>
+
+<p>不回看答案，再写一个程序：用 <code>var</code> 声明 nil slice，通过 <code>for</code> 把 1 到 5 依次 append 进去，再用 <code>range</code> 和 <code>if</code> 只打印偶数。成功输出是两行：<code>2</code> 和 <code>4</code>。</p>
+
+<details>
+  <summary>阶段复习参考答案</summary>
+  <pre><code class="language-go" data-example="go-review">package main
+
+import "fmt"
+
+func main() {
+  var numbers []int
+  for i := 1; i &lt;= 5; i++ {
+    numbers = append(numbers, i)
+  }
+
+  for _, number := range numbers {
+    if number%2 == 0 {
+      fmt.Println(number)
+    }
+  }
+}</code></pre>
+  <p>这里同时复习了零值、三段式 <code>for</code>、<code>range</code>、<code>_</code>、<code>if</code> 和取模。nil slice 可直接 append，因此无需先写 <code>make</code>。</p>
+</details>
+</section>
+
+<section class="lesson-section lesson-section--action lesson-section--quiz" aria-labelledby="quiz">
+<h2 id="quiz">小测验</h2>
+<p class="section-intro">选择答案后会立即看到反馈与解释。</p>
+
+<div class="quiz" data-explain="数组变量保存整份数组值，赋值会复制全部元素；直接替换副本的元素不会改变原数组对应槽位。">
+  <p class="quiz-q">1. Go 中把一个数组赋值给另一个变量会怎样？</p>
+  <div class="quiz-options">
+    <button class="quiz-opt" data-correct>复制全部元素</button>
+    <button class="quiz-opt">共享同一存储</button>
+    <button class="quiz-opt">只复制首元素</button>
+    <button class="quiz-opt">自动变成切片</button>
+  </div>
+  <p class="quiz-feedback" aria-live="polite"></p>
+</div>
+
+<div class="quiz" data-explain="切片表达式不会复制元素，view 与原 slice 会访问同一个底层数组区间。">
+  <p class="quiz-q">2. <code>view := xs[1:3]</code> 默认会怎样？</p>
+  <div class="quiz-options">
+    <button class="quiz-opt" data-correct>共享底层数组</button>
+    <button class="quiz-opt">复制选中元素</button>
+    <button class="quiz-opt">转换固定数组</button>
+    <button class="quiz-opt">清空原始切片</button>
+  </div>
+  <p class="quiz-feedback" aria-live="polite"></p>
+</div>
+
+<div class="quiz" data-explain="append 可能复用旧数组，也可能分配新数组；只有返回的 slice 描述了追加后的结果。">
+  <p class="quiz-q">3. 调用 <code>append</code> 后必须做什么？</p>
+  <div class="quiz-options">
+    <button class="quiz-opt" data-correct>接住返回切片</button>
+    <button class="quiz-opt">忽略返回结果</button>
+    <button class="quiz-opt">只修改原数组</button>
+    <button class="quiz-opt">固定增加容量</button>
+  </div>
+  <p class="quiz-feedback" aria-live="polite"></p>
+</div>
+
+<div class="quiz" data-explain="先 make 出同样长度的目标 slice，再 copy 元素，副本才拥有独立的底层数组。">
+  <p class="quiz-q">4. 怎样得到元素独立的 slice 副本？</p>
+  <div class="quiz-options">
+    <button class="quiz-opt" data-correct>新建后再复制</button>
+    <button class="quiz-opt">直接赋值切片</button>
+    <button class="quiz-opt">再次切片全长</button>
+    <button class="quiz-opt">只增加其容量</button>
+  </div>
+  <p class="quiz-feedback" aria-live="polite"></p>
+</div>
+
+</section>
+
+<section class="lesson-section lesson-section--reference" aria-labelledby="sources">
+<h2 id="sources">参考资料</h2>
+
+<ul>
+  <li><strong>主源（必读）：</strong><a href="https://go.dev/tour/moretypes/6">A Tour of Go：More types</a>，从 Arrays 到 Range 共 12 小节，建议边改边运行。</li>
+  <li><a href="https://go.dev/ref/spec#Array_types">Go 语言规范：Array types</a> 与 <a href="https://go.dev/ref/spec#Slice_types">Slice types</a>，核对长度、零值、底层数组和容量的正式定义。</li>
+  <li><a href="https://go.dev/ref/spec#Appending_and_copying_slices">Go 语言规范：Appending to and copying slices</a>，核对 <code>append</code> 与 <code>copy</code> 的行为。</li>
+  <li><a href="https://go.dev/blog/slices-intro">Go Slices：usage and internals</a>，官方博客对 slice 描述符、共享存储和增长过程的图解。</li>
+  <li>上一课：<a href="0003-control-flow.html">第 3 课：控制流</a>。</li>
+  <li>对照速查：<a href="../reference/0004-arrays-slices.html">数组与 slice 速查表</a>。</li>
+</ul>
+
+</section>
+
+</article>
+
+</main>
+
+<footer class="lesson-footer">
+  <p><strong>有不清楚的地方？</strong>直接问你的 agent 老师。比如“为什么 slice 不是数组指针”“什么时候必须 copy”或“nil slice 和空 slice 该怎么选”。</p>
+  <p>下节课预告：<strong>复合类型 II：map</strong>。用键查值、处理不存在的键，并对照 TypeScript 的 <code>Map</code> 与对象。</p>
+</footer>
+
+</body>
+</html>

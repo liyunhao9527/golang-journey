@@ -6,3 +6,4 @@
 - 2026-08-19:教学工作区初始化,第 1 课交付(Hello World + 工具链对照)
 - 2026-08-19:第 1 课确认完成;第 2 课交付(变量与类型:var/:=/const、零值、类型对照)。新增可复用组件 assets/quiz.js(交互测验)。Go 装在 /usr/local/go/bin(官方安装包),当前 shell 里需全路径
 - 2026-08-25:第 3 课交付(控制流:if 初始化语句、三种 for、range、switch 不贯穿)。教学经验:课程里的"期望输出"必须先跑 demo 验证——range 字符串字节索引我初稿就写错了(见 learning-records/0003)。下一课:数组与 slice
+- 2026-09-07:第 4 课交付(数组与 slice:数组值复制、slice 共享底层数组、len/cap、append、make/copy)。新增 Go/TypeScript 基准 demo、速查页及页面示例执行检查。等待用户完成练习后再写学习记录。下一课:map
