@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="用 Go map 统计词频，对照 TypeScript Map 学习零值、存在性判断和初始化。">
+<meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
+<title>第 5 课：map | 键值与词频统计</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../assets/vendor/highlight-monokai.css">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/vendor/highlight.min.js" defer></script>
+<script src="../assets/highlight-init.js" defer></script>
+<script src="../assets/quiz.js" defer></script>
+</head>
+<body class="lesson-page compiler-lesson">
+
+<a class="skip-link" href="#course-content">跳到正文</a>
+
+<nav class="course-nav" aria-label="课程导航">
+  <a class="course-brand" href="0000-course-list.html">
+    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
+    <span>Golang Journey</span>
+  </a>
+  <div class="course-nav__links">
+    <a href="0006-pointers.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-arrow-right"></use></svg><span>下一课</span></a>
+    <a href="0000-course-list.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-application-menu"></use></svg><span>课程目录</span></a>
+    <a href="0004-arrays-and-slices.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-arrow-left"></use></svg><span>上一课</span></a>
+    <a href="../reference/0005-maps.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-book-open"></use></svg><span>本课速查</span></a>
+  </div>
+</nav>
+
+<main id="course-content" class="lesson-shell"><header class="lesson-header"><div class="lesson-header__copy"><p class="kicker">第 5 课 / 复合类型</p><h1>map</h1><p class="lesson-deck">用键查值，把单词列表变成词频表。</p><p class="meta">约 12 分钟 · TypeScript 对照</p></div><div class="goal compiler-goal"><strong>本课目标</strong><span>独立统计词频，用 ok 区分零值与缺失键，并在写入前初始化 map。</span></div></header><aside class="lesson-rail"><div class="lesson-rail__inner"><nav class="lesson-outline" aria-label="本课目录"><a href="#lookup">键值操作</a><a href="#nil">初始化</a><a href="#sharing">共享与遍历</a><a href="#practice">动手练习</a><a href="#quiz">小测验</a></nav><div class="lesson-progress" aria-label="当前第 5 课"><span><strong>05</strong> / 05</span><small>复合类型 · 当前课</small></div></div></aside><article class="lesson-article"><section class="lesson-section lesson-section--concept" aria-labelledby="lookup"><h2 id="lookup">键值操作：读到 0，不代表键存在</h2><p>上一课用 slice 按位置取值；本课用 map 按键取值。<code>map[string]int</code> 的键是字符串，值是整数。先完成读、写、更新和删除，再区分“存了 0”与“没有这个键”。</p><p>下面均为完整程序。Go 保存为 <code>main.go</code>，在文件所在目录执行 <code>go run main.go</code>；TypeScript 保存为 <code>main.ts</code>，在同一目录用已安装的 Node 24 执行 <code>node main.ts</code>。</p><div class="compare"><div><p class="lang-label">Go / main.go</p><pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+  scores := map[string]int{&quot;Go&quot;: 0}
+  scores[&quot;TS&quot;] = 2
+  scores[&quot;TS&quot;]++
+  fmt.Println(scores[&quot;Go&quot;], scores[&quot;Rust&quot;], len(scores))
+  value, ok := scores[&quot;Go&quot;]
+  fmt.Println(value, ok)
+  value, ok = scores[&quot;Rust&quot;]
+  fmt.Println(value, ok)
+  delete(scores, &quot;TS&quot;)
+  fmt.Println(len(scores))
+}</code></pre></div><div class="translation-rail" aria-label="Go 与 TypeScript 的异同"><span><b>相同点</b>相同键再次写入会更新已有值，删除后条目数减少。</span><span><b>不同点</b>Go 缺失键返回值类型的零值；TS Map.get 返回 undefined。Go 用第二个结果 ok，TS 用 has 判断存在性。</span></div><div><p class="lang-label">TypeScript / main.ts</p><pre><code class="language-typescript">const scores = new Map&lt;string, number&gt;([[&quot;Go&quot;, 0]]);
+scores.set(&quot;TS&quot;, 2);
+scores.set(&quot;TS&quot;, (scores.get(&quot;TS&quot;) ?? 0) + 1);
+console.log(scores.get(&quot;Go&quot;), scores.get(&quot;Rust&quot;), scores.size);
+console.log(scores.get(&quot;Go&quot;), scores.has(&quot;Go&quot;));
+console.log(scores.get(&quot;Rust&quot;), scores.has(&quot;Rust&quot;));
+scores.delete(&quot;TS&quot;);
+console.log(scores.size);</code></pre></div></div><p>Go 输出：</p><pre><code class="language-plaintext">0 0 2
+0 true
+0 false
+1</code></pre><p>TS 前三行分别为 <code>0 undefined 2</code>、<code>0 true</code>、<code>undefined false</code>，最后一行为 <code>1</code>。<code>?? 0</code> 在左侧为 null 或 undefined 时使用 0。</p><p><code>value, ok := scores[key]</code> 一次声明两个变量；ok 是布尔值，不是错误。读取缺失键不会新增条目。<code>delete(m, key)</code> 删除缺失键也安全，但与 TS 的 delete 方法不同，它不返回布尔值。参见<a href="https://go.dev/ref/spec#Index_expressions">索引规范</a>和<a href="https://go.dev/ref/spec#Deletion_of_map_elements">删除规范</a>。</p></section><section class="lesson-section lesson-section--concept" aria-labelledby="nil"><h2 id="nil">nil map：可读，写之前先初始化</h2><p>回忆：nil slice 可以接住 append 的结果。map 的规则不同：<code>var counts map[string]int</code> 只得到 nil map；写入前用 <code>make</code> 或 map 字面量创建可写的 map。TypeScript 中 <code>new Map()</code> 已创建可写容器。</p><p>完整程序，保存为 main.go，在所在目录运行 go run main.go：</p><pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+  var counts map[string]int
+  fmt.Println(counts == nil, len(counts), counts[&quot;Go&quot;])
+  delete(counts, &quot;Go&quot;)
+  counts = make(map[string]int)
+  counts[&quot;Go&quot;]++
+  fmt.Println(counts[&quot;Go&quot;])
+}</code></pre><p>输出：</p><pre><code class="language-plaintext">true 0 0
+1</code></pre><p>nil map 可读取、求 len、delete 和 range（零次迭代）。直接写入会产生运行时 panic。空字面量 <code>map[string]int{}</code> 与 make 都能创建非 nil 的空 map。参见<a href="https://go.dev/ref/spec#Map_types">Map types</a>。</p></section><section class="lesson-section lesson-section--concept" aria-labelledby="sharing"><h2 id="sharing">赋值共享条目，遍历顺序未指定</h2><p>map 赋值不会复制全部条目：通过别名写入同一个 map，原变量能读到修改。这个行为对应 TS 的 <code>const alias = counts</code> 后调用 alias.set。以下完整程序保存为 main.go，在所在目录运行 go run main.go。</p><pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+  counts := map[string]int{&quot;Go&quot;: 1}
+  alias := counts
+  alias[&quot;Go&quot;] = 2
+  fmt.Println(counts[&quot;Go&quot;])
+  for word, count := range counts {
+    fmt.Println(word, count)
+  }
+}</code></pre><p>输出两行：<code>2</code> 和 <code>Go 2</code>。这里仅一个键；多个键时，Go 的 range 顺序未指定，也不保证两次遍历相同。TS Map 按插入顺序遍历。需要固定展示顺序时，本课先按一个明确的 slice 依次查键。</p><p>键必须支持相等比较。本课使用 string；int 也可以，slice 和 map 不可以。与 TS Map 能把数组对象作为身份键的规则不同。参见<a href="https://go.dev/ref/spec#Map_types">键类型要求</a>和<a href="https://go.dev/ref/spec#For_range">range 规范</a>。</p></section><section class="lesson-section lesson-section--action" aria-labelledby="practice"><h2 id="practice">动手练习：用 slice + map 统计词频</h2><p>在 <code>demos/05-maps/sandbox/count.go</code> 创建空文件。先不展开答案：</p><ol><li>准备 slice：<code>[]string{"Go", "TS", "Go", "Rust", "Go", "TS"}</code>。</li><li>创建可写的 <code>map[string]int</code>，用 range 遍历单词，每遇到一次就累加。缺失键的零值正好是计数起点。</li><li>按 Go、TS、Rust、Java 的顺序输出单词、次数和是否存在，复习上一课的 slice 及第三课的 range。</li></ol><p>从仓库根目录运行 <code>go run demos/05-maps/sandbox/count.go</code>。成功条件：</p><pre><code class="language-plaintext">Go 3 true
+TS 2 true
+Rust 1 true
+Java 0 false</code></pre><details><summary>参考答案：先尝试，再核对</summary><pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+  words := []string{&quot;Go&quot;, &quot;TS&quot;, &quot;Go&quot;, &quot;Rust&quot;, &quot;Go&quot;, &quot;TS&quot;}
+  counts := make(map[string]int)
+  for _, word := range words {
+    counts[word]++
+  }
+  for _, word := range []string{&quot;Go&quot;, &quot;TS&quot;, &quot;Rust&quot;, &quot;Java&quot;} {
+    count, ok := counts[word]
+    fmt.Println(word, count, ok)
+  }
+}</code></pre><p><code>counts[word]++</code> 从零值开始计数；最后遍历的是有序 slice，因此输出顺序固定。Java 的 0 只是读取结果，没有被插入 map。</p></details><p>基准示例：<a href="../demos/05-maps/maps.go">maps.go</a>。从仓库根目录运行 <code>go run demos/05-maps/maps.go</code>，输出与第一节相同。明天不看答案，再从空文件完成词频统计。</p></section><section class="lesson-section lesson-section--quiz" aria-labelledby="quiz"><h2 id="quiz">小测验</h2><div class="quiz" data-explain="ok 判断键是否存在，与值是不是零无关。"><p class="quiz-q">存有 Go: 0，读取 Go 的 value, ok 是什么？</p><div class="quiz-options"><button class="quiz-opt">0, false</button><button class="quiz-opt" data-correct>0, true</button></div><p class="quiz-feedback" aria-live="polite"></p></div><div class="quiz" data-explain="程序可以编译，但写入 nil map 会 panic；先 make 再写。"><p class="quiz-q">向 nil map 写入一个键会怎样？</p><div class="quiz-options"><button class="quiz-opt">正常写入</button><button class="quiz-opt" data-correct>运行报错</button><button class="quiz-opt">编译报错</button></div><p class="quiz-feedback" aria-live="polite"></p></div><div class="quiz" data-explain="Go 规范不保证遍历顺序；需要固定输出时用明确的键序列。"><p class="quiz-q">多个键的 Go map 遍历顺序怎样？</p><div class="quiz-options"><button class="quiz-opt">插入顺序</button><button class="quiz-opt">字母顺序</button><button class="quiz-opt" data-correct>顺序未定</button></div><p class="quiz-feedback" aria-live="polite"></p></div></section><section class="lesson-section lesson-section--reference" aria-labelledby="sources"><h2 id="sources">参考资料</h2><ul><li>主源：<a href="https://go.dev/tour/moretypes/19">A Tour of Go：Maps</a>，读第 19–22 小节，运行并修改示例。</li><li><a href="https://go.dev/ref/spec#Map_types">Go 官方规范：map</a></li><li><a href="0004-arrays-and-slices.html">上一课：数组与 slice</a></li><li><a href="../reference/0005-maps.html">本课 map 速查</a></li></ul></section></article></main><footer class="lesson-footer"><p>有不清楚的地方，直接问你的 agent 老师。完成练习后，把代码或输出发来，我们一起检查。</p></footer></body></html>

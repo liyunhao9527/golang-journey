@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="用 Go 指针读写原变量，对照 TypeScript 理解取地址、解引用、指针赋值与 nil。">
+<meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
+<title>第 6 课：指针 | 地址与间接修改</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../assets/vendor/highlight-monokai.css">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/vendor/highlight.min.js" defer></script>
+<script src="../assets/highlight-init.js" defer></script>
+<script src="../assets/quiz.js" defer></script>
+</head>
+<body class="lesson-page compiler-lesson">
+
+<a class="skip-link" href="#course-content">跳到正文</a>
+
+<nav class="course-nav" aria-label="课程导航">
+  <a class="course-brand" href="0000-course-list.html">
+    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
+    <span>Golang Journey</span>
+  </a>
+  <div class="course-nav__links">
+    <a href="0000-course-list.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-application-menu"></use></svg><span>课程目录</span></a>
+    <a href="0005-maps.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-arrow-left"></use></svg><span>上一课</span></a>
+    <a href="../reference/0006-pointers.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-book-open"></use></svg><span>本课速查</span></a>
+  </div>
+</nav>
+
+<main id="course-content" class="lesson-shell"><header class="lesson-header"><div class="lesson-header__copy"><p class="kicker">第 6 课 / 类型与存储</p><h1>指针</h1><p class="lesson-deck">区分“修改指向的值”与“改变指向谁”。</p><p class="meta">约 10 分钟 · TypeScript 对照</p></div><div class="goal compiler-goal"><strong>本课目标</strong><span>用 &amp; 与 * 修改原变量，预测指针赋值后的结果，并在解引用前处理 nil。</span></div></header><aside class="lesson-rail"><div class="lesson-rail__inner"><nav class="lesson-outline" aria-label="本课目录"><a href="#address">地址与解引用</a><a href="#assign">赋值与修改</a><a href="#nil">nil 边界</a><a href="#practice">动手练习</a><a href="#quiz">小测验</a></nav><div class="lesson-progress" aria-label="当前第 6 课"><span><strong>06</strong> / 06</span><small>类型与存储 · 当前课</small></div></div></aside><article class="lesson-article"><section class="lesson-section lesson-section--concept" aria-labelledby="address"><h2 id="address">& 取地址，* 读写指向的变量</h2><p>前置知识只需要第二课的变量与第三课的 if；可以先于 map 练习阅读。你已经知道整数赋值会得到独立的值。现在要做的是：通过另一个变量，明确修改原来的整数。</p><p><code>&amp;score</code> 取得 score 的地址，结果类型是 <code>*int</code>；<code>p := &amp;score</code> 保存这个指针。表达式 <code>*p</code> 表示 p 指向的变量：可读，也可赋值。类型里的 <code>*int</code> 表示“指向 int 的指针”，表达式里的 <code>*p</code> 表示“解引用”。</p><p>以下为完整程序：保存为 <code>main.go</code>，在文件所在目录执行 <code>go run main.go</code>。</p><div class="compare"><div><p class="lang-label">Go / main.go</p><pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+  score := 10
+  copied := score
+  p := &amp;score
+  *p = 20
+  fmt.Println(score, copied, *p)
+  fmt.Printf(&quot;%T\n&quot;, p)
+}</code></pre></div><div class="translation-rail" aria-label="Go 与 TypeScript 的异同"><span><b>相同点</b>整数赋值复制数值；两种语言都可以显式安排共享可修改的数据。</span><span><b>不同点</b>Go 可以取已有整数变量的地址；TS 没有这个操作，示例改用对象属性承载共享值。</span></div><div><p class="lang-label">TypeScript / main.ts（完整脚本）</p><pre><code class="language-typescript">let score = 10;
+let copied = score;
+const box = { value: score };
+const alias = box;
+alias.value = 20;
+console.log(score, copied, box.value);</code></pre></div></div><p>Go 输出：</p><pre><code class="language-plaintext">20 10 20
+*int</code></pre><p>TypeScript 保存为 main.ts，在所在目录用 Node 24 执行 <code>node main.ts</code>，输出 <code>10 10 20</code>。box.value 最初复制了 score 的数值，修改对象属性不会修改原 score 变量。因此这个对象只是共享修改的对照，不是 Go 取地址的等价翻译。</p><p><code>fmt.Printf("%T\n", p)</code> 打印类型；<code>\n</code> 是换行。依据：<a href="https://go.dev/ref/spec#Address_operators">Go 规范：地址运算符</a>。</p></section><section class="lesson-section lesson-section--concept" aria-labelledby="assign"><h2 id="assign">修改 *p 与重新赋值 p 是两件事</h2><p><code>*p = 99</code> 修改指向的值；<code>p = &amp;right</code> 改变 p 指向谁。<code>q := p</code> 复制指针值：最初指向同一个变量，之后重新赋值 p 不会同时改变 q。</p><p>以下为完整程序：保存为 <code>main.go</code>，在文件所在目录执行 <code>go run main.go</code>。</p><pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+  left, right := 10, 90
+  p := &amp;left
+  q := p
+  *q = 11
+  p = &amp;right
+  *p = 99
+  fmt.Println(left, right, *q, *p)
+  fmt.Println(q == &amp;left, p == &amp;right)
+}</code></pre><p>先预测，再展开输出。TS 对象引用也有类似区别：修改对象属性会被别名看见，重新绑定某个变量不会重新绑定另一个变量；上节的 box/alias 对照可帮助记忆。</p><details><summary>查看输出与解释</summary><pre><code class="language-plaintext">11 99 11 99
+true true</code></pre><p>q 一直指向 left。p 后来指向 right，所以最后一次写入修改 right。对这些 int 变量，指针相等比较可以确认是否指向同一变量。</p></details><p>普通 Go 指针不支持通过加减整数来移动地址；本课始终通过变量地址建立指向关系。参见<a href="https://go.dev/tour/moretypes/1">官方 Tour：Pointers</a>。</p></section><section class="lesson-section lesson-section--concept" aria-labelledby="nil"><h2 id="nil">nil 指针：没有指向变量，不能解引用</h2><p><code>var p *int</code> 的零值是 nil。它与“指向一个值为 0 的 int”不同。类似 TS 中区分 <code>null</code> 与 <code>{ value: 0 }</code>，是否存在与内部数值要分开判断。</p><p>以下为完整程序：保存为 <code>main.go</code>，在文件所在目录执行 <code>go run main.go</code>。</p><pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+  var p *int
+  fmt.Println(p == nil)
+  if p == nil {
+    fmt.Println(&quot;not set&quot;)
+  }
+  score := 0
+  p = &amp;score
+  fmt.Println(p == nil, *p)
+}</code></pre><p>输出：</p><pre><code class="language-plaintext">true
+not set
+false 0</code></pre><p>先用 <code>p == nil</code> 判断；只有指向有效变量时才能读取或写入 <code>*p</code>。</p><details><summary>边界验证：nil 解引用会发生什么？</summary><p>下面是完整的<strong>预期运行错误</strong>程序。保存到临时文件 nil.go，在该文件目录执行 go run nil.go。它能编译，但运行时因 nil 指针解引用而 panic。</p><pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+  var p *int
+  fmt.Println(*p)
+}</code></pre><p>恢复步骤：把 <code>var p *int</code> 替换为两行 <code>score := 0</code>、<code>p := &amp;score</code>，再运行输出 0。也可以先用 if 检查 nil，未设置时不解引用。</p></details><p>特别留意与第五课的差别：nil map 可以查键并返回零值；nil 指针不能解引用。依据：<a href="https://go.dev/ref/spec#Pointer_types">指针类型</a>及<a href="https://go.dev/ref/spec#Address_operators">解引用规则</a>。</p></section><section class="lesson-section lesson-section--action" aria-labelledby="practice"><h2 id="practice">动手练习：让两个指针分开修改</h2><p>在 <code>demos/06-pointers/sandbox/score.go</code> 从空文件完成：</p><ol><li>声明 score 为 10、backup 为 50；让 p 指向 score，再把 p 赋给 q。</li><li>只通过 p，让 score 增加 5。</li><li>让 p 改为指向 backup，再通过 p 把 backup 改为 99。</li><li>打印 score、backup、*q、*p。</li></ol><p>从仓库根目录运行 <code>go run demos/06-pointers/sandbox/score.go</code>。成功输出：</p><pre><code class="language-plaintext">15 99 15 99</code></pre><details><summary>参考答案与关键解释</summary><pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+  score, backup := 10, 50
+  p := &amp;score
+  q := p
+  *p = *p + 5
+  p = &amp;backup
+  *p = 99
+  fmt.Println(score, backup, *q, *p)
+}</code></pre><p>q 保留了指向 score 的指针值。给 p 重新赋值，只改变 p；通过 *p 赋值，才修改它当前指向的变量。</p></details><p>完整基准示例：<a href="../demos/06-pointers/pointers.go">pointers.go</a>。从仓库根目录执行 <code>go run demos/06-pointers/pointers.go</code>，输出与第一节相同。明天不看答案再写一次，并解释每一步究竟改了“指针”还是“值”。</p></section><section class="lesson-section lesson-section--quiz" aria-labelledby="quiz"><h2 id="quiz">小测验</h2><div class="quiz" data-explain="*p 表示 p 指向的变量，因此修改 x 的值。"><p class="quiz-q">p 指向整数 x，*p = 8 修改了什么？</p><div class="quiz-options"><button class="quiz-opt" data-correct>变量 x</button><button class="quiz-opt">指针 p</button><button class="quiz-opt">类型 T</button></div><p class="quiz-feedback" aria-live="polite"></p></div><div class="quiz" data-explain="指针值被复制到 q；之后重新赋值 p 不会改变 q。"><p class="quiz-q">q := p 后执行 p = &other，q 会怎样？</p><div class="quiz-options"><button class="quiz-opt" data-correct>仍指原处</button><button class="quiz-opt">跟随改指</button><button class="quiz-opt">自动清空</button></div><p class="quiz-feedback" aria-live="polite"></p></div><div class="quiz" data-explain="p 的零值是 nil，解引用会在运行时 panic。"><p class="quiz-q">var p *int 后直接读取 *p 会怎样？</p><div class="quiz-options"><button class="quiz-opt">得到零值</button><button class="quiz-opt" data-correct>运行报错</button><button class="quiz-opt">编译报错</button></div><p class="quiz-feedback" aria-live="polite"></p></div></section><section class="lesson-section lesson-section--reference" aria-labelledby="sources"><h2 id="sources">参考资料</h2><ul><li>主源：<a href="https://go.dev/tour/moretypes/1">A Tour of Go：Pointers</a>，运行示例并修改取地址与赋值的目标。</li><li><a href="https://go.dev/ref/spec#Address_operators">Go 官方规范：地址运算符</a></li><li><a href="0005-maps.html">第五课：map</a> · <a href="0004-arrays-and-slices.html">第四课：数组与 slice</a></li><li><a href="../reference/0006-pointers.html">本课指针速查</a></li></ul></section></article></main><footer class="lesson-footer"><p>有不清楚的地方，直接问你的 agent 老师。比如“q 为什么没有跟着 p 改变”“nil 和指向 0 有什么区别”。把练习代码或预测结果发来，我们一起核对。</p></footer></body></html>

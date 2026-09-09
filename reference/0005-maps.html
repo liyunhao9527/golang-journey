@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Go map 操作速查：创建、读写、存在性、删除与遍历。">
+<meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
+<title>速查：第 5 课：map | 键值与词频统计</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../assets/vendor/highlight-monokai.css">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/vendor/highlight.min.js" defer></script>
+<script src="../assets/highlight-init.js" defer></script>
+<script src="../assets/quiz.js" defer></script>
+</head>
+<body class="lesson-page compiler-lesson compiler-reference reference-page">
+
+<a class="skip-link" href="#course-content">跳到正文</a>
+
+<nav class="course-nav" aria-label="课程导航">
+  <a class="course-brand" href="../lessons/0000-course-list.html">
+    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
+    <span>Golang Journey</span>
+  </a>
+  <div class="course-nav__links">
+    <a href="../lessons/0000-course-list.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-application-menu"></use></svg><span>课程目录</span></a>
+    <a href="../lessons/0004-arrays-and-slices.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-arrow-left"></use></svg><span>上一课</span></a>
+    <a href="../reference/0005-maps.html"><svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-book-open"></use></svg><span>本课速查</span></a>
+  </div>
+</nav>
+
+<main id="course-content"><header class="lesson-header"><p class="kicker">速查 05 / 复合类型</p><h1>map 速查</h1></header><section class="reference-section"><h2>最常用操作</h2><p>以下是语法示意，不可直接运行；m 为 map[string]int，key 为 string，value 为 int。完整程序见<a href="../lessons/0005-maps.html#lookup">第五课</a>。</p><pre><code class="language-go">m := make(map[string]int) // 创建可写 map
+m[key] = value           // 新增或更新
+value, ok := m[key]       // 读取与存在性
+delete(m, key)           // 删除，无返回值
+len(m)                   // 条目数</code></pre><p>缺失键返回值类型零值，且不插入条目。nil map 可读不可写。map 赋值共享条目。range 顺序未指定。键必须支持比较，不能是 slice 或 map。</p><p>TS 对照：new Map / set / get + has / delete / size。TS get 缺失返回 undefined；Map 按插入顺序遍历。</p></section><section class="reference-section"><h2>回到课程</h2><p><a href="../lessons/0005-maps.html">第五课与词频练习</a> · <a href="0004-arrays-slices.html">上一张速查</a> · <a href="https://go.dev/ref/spec#Map_types">官方规范</a></p></section></main><footer class="lesson-footer">先检查 ok，再判断值的含义。</footer></body></html>
