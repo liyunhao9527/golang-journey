@@ -7,9 +7,10 @@
 <meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
 <title>第 4 课：数组与 slice | 值、视图与扩容</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="../assets/vendor/highlight-monokai.css">
+<link rel="icon" type="image/svg+xml" href="../assets/go-logo.svg">
+<link rel="stylesheet" href="../assets/vendor/highlight-one-dark.css">
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/code-blocks.css">
 <script src="../assets/vendor/highlight.min.js" defer></script>
 <script src="../assets/highlight-init.js" defer></script>
 <script src="../assets/quiz.js" defer></script>
@@ -20,7 +21,7 @@
 
 <nav class="course-nav" aria-label="课程导航">
   <a class="course-brand" href="0000-course-list.html">
-    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
+    <img class="course-brand__logo" src="../assets/go-logo.svg" alt="" width="64" height="24">
     <span>Golang Journey</span>
   </a>
   <div class="course-nav__links">
@@ -235,7 +236,7 @@ console.log(newLength);</code></pre>
 <p><code>make([]string, 0, 3)</code> 创建长度 0、容量 3 的 slice；三个槽位已经分配，但当前还不能用索引访问。前两次追加可以复用这份容量。</p>
 
 <blockquote>
-  <p><strong>为什么必须写回？</strong>容量足够时，<code>append</code> 会复用底层数组；容量不足时，它会分配新数组并返回指向新存储的 slice。调用者不能依赖某一次追加究竟走哪条路径，所以始终写 <code>s = append(s, value)</code>。</p>
+  <p><strong>为什么必须写回？</strong>容量足够时，<code>append</code> 会复用底层数组；容量不足时，它会分配新数组并返回指向新存储的 slice。调用者不能依赖某一次追加究竟走哪条路径，需要更新原变量时写 <code>s = append(s, value)</code>；也可以把返回值保存到另一个变量，但不能忽略返回结果。</p>
 </blockquote>
 
 <p>完整的容量演示在 <a href="../demos/04-arrays-slices/arrays_slices.go">arrays_slices.go</a> 的 <code>demoAppendCapacity</code>。从仓库根目录运行：</p>
@@ -296,7 +297,7 @@ console.log(cloned);</code></pre>
   </div>
 </div>
 
-<p>两种语言这里做的都是<strong>浅复制</strong>：元素如果自身包含 map、slice、对象或其他共享数据，复制外层序列并不会递归复制内部数据。</p>
+<p>这里的整数副本彼此独立。对于复杂元素，两种语言的这种写法都只做<strong>浅复制</strong>：元素如果自身包含 map、slice、对象或其他共享数据，复制外层序列并不会递归复制内部数据。</p>
 </section>
 
 <section class="lesson-section lesson-section--action" aria-labelledby="practice">

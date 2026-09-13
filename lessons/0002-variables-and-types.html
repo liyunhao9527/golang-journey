@@ -7,9 +7,10 @@
 <meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
 <title>第 2 课:变量与类型 —— 声明、推断与零值</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="../assets/vendor/highlight-monokai.css">
+<link rel="icon" type="image/svg+xml" href="../assets/go-logo.svg">
+<link rel="stylesheet" href="../assets/vendor/highlight-one-dark.css">
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/code-blocks.css">
 <script src="../assets/vendor/highlight.min.js" defer></script>
 <script src="../assets/highlight-init.js" defer></script>
 <script src="../assets/quiz.js" defer></script>
@@ -20,7 +21,7 @@
 
 <nav class="course-nav" aria-label="课程导航">
   <a class="course-brand" href="0000-course-list.html">
-    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
+    <img class="course-brand__logo" src="../assets/go-logo.svg" alt="" width="64" height="24">
     <span>Golang Journey</span>
   </a>
   <div class="course-nav__links">
@@ -70,7 +71,7 @@
       <span>4 道随堂测验</span>
     </div>
     <div class="lesson-progress" aria-label="Go 学习旅程进度：已到第 2 课，共 4 课">
-      <span><strong>02</strong> / 04</span>
+      <span><strong>02</strong> / 06</span>
       <i aria-hidden="true"><b style="width: 50%"></b></i>
       <small>基础语法 · 第 2 课</small>
     </div>
@@ -80,9 +81,9 @@
 <article class="lesson-article">
 
 <section class="lesson-section lesson-section--concept" aria-labelledby="declarations">
-<h2 id="declarations">声明三兄弟:var / := / const</h2>
+<h2 id="declarations">声明变量与常量：var、:=、const</h2><p>本页 Go 代码块均为独立完整程序：每次保存到练习目录的 main.go，在该目录执行 <code>go run main.go</code>。TypeScript 块各自保存为 main.ts，用 <code>tsc --strict --noEmit --target es2022 main.ts</code> 检查，再用支持类型擦除的 Node 运行 <code>node main.ts</code>。命令中特别写出 demos/ 路径时，从仓库根目录执行。</p>
 
-<p>Go 的变量声明有四种写法,前三兄弟对应 TS 的 <code>let</code>/<code>const</code>:</p>
+<p>下面区分三种变量声明写法和一种常量声明，对照 TS 的 <code>let</code>/<code>const</code>:</p>
 
 <table>
   <tr><th>Go</th><th>含义</th><th>TS 对照</th></tr>
@@ -108,23 +109,37 @@
   </tr>
 </table>
 
-<p>三条铁律,和 TS 的直觉不太一样:</p>
+<p>先分清三条规则：</p>
 
 <ul>
   <li><strong><code>:=</code> 只能用在函数内部。</strong>包级(顶层)只能写 <code>var</code> 或 <code>const</code>。</li>
-  <li><strong>类型一旦确定,终身不变:</strong><code>x := 1</code> 之后写 <code>x = "a"</code> 会编译报错。TS 的 <code>let x = 1</code> 也是这个行为,但 Go 没有 <code>any</code> 兜底——除非你显式声明。</li>
-  <li><strong>未使用的局部变量是编译错误</strong>(未使用的 import 同理)。TS 里这只是 ESLint 的一条 warning,Go 直接拒绝编译。</li>
+  <li><strong>变量声明后，类型固定：</strong><code>x := 1</code> 之后写 <code>x = "a"</code> 会编译报错。TS 的 <code>let x = 1</code> 也是这个行为,Go 也有 any，但需要明确声明；本课使用具体类型。</li>
+  <li><strong>未使用的局部变量是编译错误</strong>(未使用的 import 同理)。TS 是否报告未使用变量取决于 noUnusedLocals 等编译选项和 lint 配置；Go 工具链会拒绝未使用的局部变量和导入。</li>
 </ul>
 
-<h3>Go 的 const 不是 TS 的只读变量</h3>
+<h3>先运行一个声明与零值示例</h3><p>completed 从 1 增加到 2；label 没有显式赋值，打印带引号的空字符串。后面再解释零值规则。</p><div class="compare"><div><p class="lang-label">Go / main.go</p><pre><code class="language-go">package main
 
-<p>TS 的 <code>const</code> 表示“这个变量绑定不能重新赋值”,右侧仍可以是运行时才得到的对象或函数结果。Go 的 <code>const</code> 必须在编译期确定,只能表示布尔、数字、字符串等常量值;不能把 slice、map 或函数调用结果声明为常量。</p>
+import "fmt"
+
+func main() {
+  const pointsPerLesson = 10
+  completed := 1
+  completed += 1
+  var label string
+  fmt.Println(completed, completed*pointsPerLesson)
+  fmt.Printf("%q\n", label)
+}</code></pre></div><div class="translation-rail" aria-label="Go 与 TypeScript 的异同"><span><b>相同点</b>两段都把计数增加到 2，并算出 20 分。</span><span><b>不同点</b>Go 的 string 自动得到空字符串；TS 这里显式初始化为空字符串以得到相同输出。</span></div><div><p class="lang-label">TypeScript / main.ts</p><pre><code class="language-typescript">const pointsPerLesson = 10;
+let completed = 1;
+completed += 1;
+let label: string = "";
+console.log(completed, completed * pointsPerLesson);
+console.log(JSON.stringify(label));</code></pre></div></div><p>两行输出依次是 <code>2 20</code> 和 <code>""</code>。completed 已经声明，更新它用 = 或 +=；不要在同一作用域写 <code>completed := 2</code>，因为左边没有新的变量。</p><h3>Go 的 const 不是 TS 的只读变量</h3>
+
+<p>TS 的 <code>const</code> 表示“这个变量绑定不能重新赋值”,右侧仍可以是运行时才得到的对象或函数结果。Go 的 <code>const</code> 必须在编译期确定,只能表示布尔、数字、字符串等常量值;slice、map 和普通函数的运行结果不能作为常量；部分内置函数在特定条件下可产生常量，例如 len("Go")。</p>
 
 <p>Go 还支持<strong>未类型化常量</strong>:例如 <code>const n = 3</code> 在真正赋给某个变量前不会过早固定成 <code>int</code>,因此可以在编译器确认值可表示的前提下用于不同数值类型。日常先记住:Go 的 <code>const</code> 是编译期值,不是 TS <code>const</code> 的一比一翻译。</p>
 
-<blockquote>
-  <p><strong>为什么?</strong>Go 的设计哲学是"零歧义、零容忍":没用的代码就是 bug 的温床。第一次被 <code>declared and not used: x</code> 卡住时别慌——删掉那行就好了。</p>
-</blockquote>
+<p>遇到 declared and not used 时，先看变量是否遗漏了使用：需要观察它，就打印；需要参与计算，就接到计算里；确实不用，再删除声明。编译错误指出的是未使用的位置，不代表所有这类变量都应直接删掉。</p>
 
 </section>
 
@@ -136,7 +151,7 @@
 <table>
   <tr><th>类型</th><th>零值</th><th>TS 对照</th></tr>
   <tr><td><code>string</code></td><td><code>""</code></td><td><code>undefined</code></td></tr>
-  <tr><td><code>int</code> / <code>float64</code></td><td><code>0</code> / <code>0.0</code></td><td><code>undefined</code>(JS 里是 <code>NaN</code>/<code>undefined</code> 混杂)</td></tr>
+  <tr><td><code>int</code> / <code>float64</code></td><td><code>0</code> / <code>0.0</code></td><td><code>undefined</code>（声明但未赋值；NaN 是另一种数值）</td></tr>
   <tr><td><code>bool</code></td><td><code>false</code></td><td><code>undefined</code></td></tr>
   <tr><td>零值为 <code>nil</code> 的类型(slice/map/指针等)</td><td><code>nil</code>(后续课程分别展开)</td><td>接近 <code>null</code>,但行为并不相同</td></tr>
 </table>
@@ -154,9 +169,9 @@
 
 <table>
   <tr><th>Go</th><th>TS</th><th>说明</th></tr>
-  <tr><td><code>string</code></td><td><code>string</code></td><td>唯一不同的:单引号 <code>'a'</code> 是 rune,不是字符串!</td></tr>
+  <tr><td><code>string</code></td><td><code>string</code></td><td>Go 字符串保存字节；单引号 <code>'a'</code> 是 rune,不是字符串!</td></tr>
   <tr><td><code>bool</code></td><td><code>boolean</code></td><td></td></tr>
-  <tr><td><code>int</code>, <code>int8</code>…<code>int64</code>, <code>uint</code>…</td><td><code>number</code></td><td>JS 的 number 只有一个(浮点);Go 显式区分位数和符号,<code>int</code> = 平台原生字长</td></tr>
+  <tr><td><code>int</code>, <code>int8</code>…<code>int64</code>, <code>uint</code>…</td><td><code>number</code></td><td>JS 的 number 只有一个(浮点);Go 显式区分位数和符号,<code>int</code> 的宽度由实现决定，为 32 或 64 位</td></tr>
   <tr><td><code>float64</code>, <code>float32</code></td><td><code>number</code></td><td><code>float64</code> 是默认,和 JS number 精度一致</td></tr>
   <tr><td><code>byte</code> = <code>uint8</code></td><td><code>number</code>(字节)</td><td>处理二进制数据时的最小单位</td></tr>
   <tr><td><code>rune</code> = <code>int32</code></td><td>—</td><td>Unicode 码点。前端最常踩的坑:<code>'a'</code> 的类型是 <code>rune</code>,不是字符串</td></tr>
@@ -181,17 +196,29 @@
   <tr><td><code>%c</code></td><td>把整数/rune 按 Unicode 字符显示</td><td><code>A</code></td></tr>
 </table>
 
-<pre><code class="language-go">n := 65
-fmt.Printf("%d %c\n", n, n) // 65 A</code></pre>
+<pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+  n := 65
+  fmt.Printf("%d %c\n", n, n) // 65 A
+}</code></pre>
 
 <p>和 TS 对照:</p>
 
 <div class="compare">
   <div>
     <p class="lang-label">Go</p>
-    <pre><code class="language-go">n := 65
-fmt.Printf("%d %c\n", n, n) // 65 A
-fmt.Printf("%T\n", n)         // int</code></pre>
+    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+  n := 65
+  fmt.Printf("%d %c\n", n, n) // 65 A
+  fmt.Printf("%T\n", n)         // int
+}</code></pre>
   </div>
   <div class="translation-rail" aria-label="Go 与 TypeScript 的异同">
     <span><b>相同点</b>两种语言都能查看数值、字符和运行时类型</span>
@@ -212,27 +239,39 @@ console.log(typeof n);                  // number</code></pre>
 <section class="lesson-section lesson-section--concept" aria-labelledby="conversion">
 <h2 id="conversion">显式类型转换:<code>T(x)</code></h2>
 
-<p>Go 不会在不同类型之间自动转换。即使 <code>int</code> 和 <code>float64</code> 都表示数字,也必须明确写出目标类型:</p>
+<p>已有数值变量在不同数值类型之间赋值时，需要显式转换。例如 <code>int</code> 和 <code>float64</code> 都表示数字,也必须明确写出目标类型:</p>
 
-<pre><code class="language-go">var n int = 3
-var f float64 = float64(n)
+<pre><code class="language-go">package main
 
-fmt.Printf("%T %v\n", n, n) // int 3
-fmt.Printf("%T %v\n", f, f) // float64 3</code></pre>
+import "fmt"
+
+func main() {
+  var n int = 3
+  var f float64 = float64(n)
+
+  fmt.Printf("%T %v\n", n, n) // int 3
+  fmt.Printf("%T %v\n", f, f) // float64 3
+}</code></pre>
 
 <p>通用写法是 <code>目标类型(值)</code>,也就是 <code>T(x)</code>。它会产生一个新值,不会改变原变量的类型——上面的 <code>n</code> 转换后仍然是 <code>int</code>。</p>
 
-<p>反向转换也可以,但小数部分会被直接截掉,不是四舍五入:</p>
+<p>浮点变量也可以转成整数。在本例数值可表示的范围内，小数部分向零截断，不是四舍五入：</p>
 
-<pre><code class="language-go">price := 19.9
-whole := int(price)
-fmt.Println(whole) // 19</code></pre>
+<pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+  price := 19.9
+  whole := int(price)
+  fmt.Println(whole) // 19
+}</code></pre>
 
 <blockquote>
-  <p><strong>转换不等于解析。</strong><code>int(3.8)</code> 是数字类型之间的转换;把字符串 <code>"42"</code> 读成数字要用 <code>strconv.Atoi</code> 或 <code>strconv.ParseInt</code>,不能写 <code>int("42")</code>。字符串解析会在后续处理输入时展开。</p>
+  <p><strong>转换不等于解析。</strong>上面的 <code>int(price)</code> 将浮点变量转换为整数；直接写 <code>int(3.8)</code> 则是预期编译错误，因为常量 3.8 不能表示为整数。把 3.8 先保存到浮点变量，再转换该变量，才会截断小数。把字符串 <code>"42"</code> 读成数字要用 <code>strconv.Atoi</code> 或 <code>strconv.ParseInt</code>,不能写 <code>int("42")</code>。字符串解析会在后续处理输入时展开。</p>
 </blockquote>
 
-<p>这和 JS/TS 的隐式强制转换不同:Go 中 <code>"1" + 1</code> 不能编译。明确写出转换,能让数值精度和数据含义的变化一眼可见。</p>
+<p>注意字符串拼接的区别：Go 中 <code>"1" + 1</code> 不能编译。明确写出转换,能让数值精度和数据含义的变化一眼可见。</p>
 
 </section>
 
@@ -243,36 +282,43 @@ fmt.Println(whole) // 19</code></pre>
 
 <div class="compare">
   <div>
-    <p class="lang-label">Go — vars.go(节选)</p>
-    <pre><code class="language-go">var explicit string = "显式类型"
-var inferred = "类型推断"
-short := "短声明"
+    <p class="lang-label">Go — 独立完整示例</p>
+    <pre><code class="language-go">package main
 
-var s string // 零值 ""
-var n int    // 零值 0
+import "fmt"
 
-fmt.Printf("%q %d\n", s, n) // "" 0</code></pre>
+func main() {
+  var explicit string = "显式类型"
+  var inferred = "类型推断"
+  short := "短声明"
+  fmt.Println(explicit, inferred, short)
+
+  var s string // 零值 ""
+  var n int    // 零值 0
+
+  fmt.Printf("%q %d\n", s, n) // "" 0
+}</code></pre>
   </div>
   <div class="translation-rail" aria-label="Go 与 TypeScript 的异同">
-    <span><b>相同点</b>两种语言都支持显式类型、类型推断和不可变绑定</span>
+    <span><b>相同点</b>两种语言都支持显式类型与类型推断</span>
     <span><b>不同点</b>Go 提供零值和短声明，TypeScript 需要显式处理 undefined</span>
   </div>
   <div>
-    <p class="lang-label">TypeScript — vars.ts(节选)</p>
+    <p class="lang-label">TypeScript — 独立脚本</p>
     <pre><code class="language-typescript">const explicit: string = "显式类型";
 const inferred = "类型推断";
 let short = "短声明";
 
-let s: string; // undefined
-let n: number; // undefined
+let s: string | undefined = undefined;
+let n: number | undefined = undefined;
 
 console.log(s, n); // undefined undefined</code></pre>
   </div>
 </div>
 
-<pre><code class="language-bash"># 两个文件输出对照
-cd demos/02-variables &amp;&amp; go run vars.go
-cd demos/02-variables &amp;&amp; node vars.ts</code></pre>
+<pre><code class="language-bash"># 在仓库根目录运行两个文件
+go run demos/02-variables/vars.go
+node demos/02-variables/vars.ts</code></pre>
 
 <p>这里的 TS 对照文件把变量显式写成 <code>string | undefined</code> 并初始化为 <code>undefined</code>,因此既能通过严格类型检查,又能观察 JavaScript 运行时值。直接写 <code>let s: string</code> 后读取,会被 TypeScript 拒绝。</p>
 
@@ -282,7 +328,7 @@ cd demos/02-variables &amp;&amp; node vars.ts</code></pre>
 <h2 id="practice">动手练习</h2>
 
 <ol>
-  <li>运行 <code>go run vars.go</code>,对照注释确认每一行的输出。</li>
+  <li>运行 <code>go run demos/02-variables/vars.go</code>,对照注释确认每一行的输出。</li>
   <li><strong>亲手触发一次编译错误:</strong>在 <code>main()</code> 里加一行 <code>unused := 1</code>,再运行。你会看到 <code>declared and not used: unused</code>——然后把这一行删掉。</li>
   <li>猜一下再验证:<code>var b byte = 'A'</code> 然后 <code>fmt.Printf("%T %d\n", b, b)</code>,输出是什么?(提示:byte 是 uint8 的别名)</li>
   <li>先猜再运行:<code>f := 8.75</code>、<code>n := int(f)</code>,然后打印 <code>f</code>、<code>n</code> 及各自的类型。确认转换产生了新值,且结果是截断而非四舍五入。</li>
@@ -296,10 +342,16 @@ cd demos/02-variables &amp;&amp; node vars.ts</code></pre>
   <p><strong>第 3 步:</strong></p>
   <pre><code class="language-plaintext">uint8 65</code></pre>
   <p>字符 <code>'A'</code> 的码点是 65;<code>%T</code> 显示别名背后的真实类型 <code>uint8</code>,和 rune 显示 <code>int32</code> 同理。</p>
-  <p><strong>第 4 步参考代码与输出:</strong></p>
-  <pre><code class="language-go">f := 8.75
-n := int(f)
-fmt.Printf("f=%v (%T), n=%v (%T)\n", f, f, n, n)</code></pre>
+  <p><strong>第 4 步独立程序与输出：</strong></p>
+  <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+  f := 8.75
+  n := int(f)
+  fmt.Printf("f=%v (%T), n=%v (%T)\n", f, f, n, n)
+}</code></pre>
   <pre><code class="language-plaintext">f=8.75 (float64), n=8 (int)</code></pre>
 </details>
 

@@ -207,9 +207,9 @@ footer.lesson-footer {
   --learning: #b96a16;
   --learning-soft: #fff3df;
   --rule: #d9e3e8;
-  --code-surface: #272822;
-  --code-surface-soft: #34352f;
-  --code-ink: #ddd;
+  --code-surface: #282c34;
+  --code-surface-soft: #313640;
+  --code-ink: #abb2bf;
   --success: #19724c;
   --success-bg: #e4f3eb;
   --danger: #a33f46;
@@ -586,7 +586,7 @@ body.lesson-page > footer.lesson-footer p {
     --surface-blue: #122c36; --ink: #e6eff2; --muted: #9babb2;
     --primary: #53c3df; --primary-hover: #77d1e7; --primary-soft: #163641;
     --learning: #efb461; --learning-soft: #392a18; --rule: #293942;
-    --code-surface: #272822; --code-surface-soft: #34352f; --code-ink: #ddd;
+    --code-surface: #282c34; --code-surface-soft: #313640; --code-ink: #abb2bf;
     --success: #7bc79d; --success-bg: #173629;
     --danger: #eda1a6; --danger-bg: #3a2428;
   }
@@ -778,8 +778,8 @@ body.lesson-page > footer.lesson-footer p {
   --primary-hover: var(--compiler-go-dark);
   --primary-soft: #dceff3;
   --rule: var(--compiler-rule);
-  --code-surface: #272822;
-  --code-surface-soft: #34352f;
+  --code-surface: #282c34;
+  --code-surface-soft: #313640;
 }
 
 .compiler-lesson .course-nav {
@@ -1197,8 +1197,8 @@ body.lesson-page > footer.lesson-footer p {
     --primary-hover: var(--compiler-go-dark);
     --primary-soft: #173640;
     --rule: var(--compiler-rule);
-    --code-surface: #272822;
-    --code-surface-soft: #34352f;
+    --code-surface: #282c34;
+    --code-surface-soft: #313640;
   }
 
   .compiler-lesson .course-nav { background: rgb(12 23 29 / 0.96); }
@@ -1500,4 +1500,10 @@ body.lesson-page > footer.lesson-footer p {
   .compiler-reference .reference-section {
     padding: 2rem 1.1rem;
   }
+}
+
+/* Official Go brand asset; shared with the site favicon. */
+.course-brand__logo { display: block; width: 64px; height: auto; flex-shrink: 0; }
+@media (max-width: 640px) {
+  .course-brand__logo { width: 46px; }
 }

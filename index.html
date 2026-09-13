@@ -4,26 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="面向 TypeScript 与 JavaScript 开发者的 Go 对照课程，从可运行示例开始建立 Go 心智模型。">
-<meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
-<title>Go 学习旅程：课程列表</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="assets/vendor/highlight-monokai.css">
-<link rel="stylesheet" href="assets/style.css">
+<meta name="theme-color" content="#f5f7f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#152126" media="(prefers-color-scheme: dark)">
+<title>Go 学习旅程：从 TypeScript 到 Go</title>
+<link rel="icon" type="image/svg+xml" href="assets/go-logo.svg">
+<link rel="stylesheet" href="assets/vendor/highlight-one-dark.css">
+<link rel="stylesheet" href="assets/home.css">
+<link rel="stylesheet" href="assets/code-blocks.css">
 <script src="assets/vendor/highlight.min.js" defer></script>
 <script src="assets/highlight-init.js" defer></script>
 </head>
-<body class="lesson-page compiler-lesson compiler-index course-index-page">
+<body class="lesson-page compiler-lesson compiler-index course-index-page journey-home">
 
 <a class="skip-link" href="#course-content">跳到课程内容</a>
 
 <nav class="course-nav" aria-label="课程导航">
   <a class="course-brand" href="index.html" aria-current="page">
-    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
-    <span>Golang Journey</span>
+    <img class="course-brand__logo" src="assets/go-logo.svg" alt="" width="64" height="24">
+    <span>Go Journey<small>面向 TypeScript 开发者</small></span>
   </a>
   <div class="course-nav__links">
-    <a href="#course-list"><svg class="ip-icon" aria-hidden="true"><use href="assets/icons/icon-park.svg#ip-application-menu"></use></svg><span>课程</span></a>
+    <a href="lessons/0000-course-list.html"><svg class="ip-icon" aria-hidden="true"><use href="assets/icons/icon-park.svg#ip-application-menu"></use></svg><span>课程</span></a>
     <a href="reference/0001-js-go-quick-reference.html"><svg class="ip-icon" aria-hidden="true"><use href="assets/icons/icon-park.svg#ip-book-open"></use></svg><span>速查</span></a>
     <a href="lessons/0001-hello-world-and-toolchain.html"><svg class="ip-icon" aria-hidden="true"><use href="assets/icons/icon-park.svg#ip-arrow-right"></use></svg><span>开始学习</span></a>
   </div>
@@ -33,72 +34,66 @@
 
 <header class="lesson-header">
   <div class="lesson-header__copy">
-    <p class="kicker">Golang Journey / 课程总览</p>
-    <h1>从 TypeScript 到 Go</h1>
-    <p class="lesson-deck">为 TypeScript / JavaScript 开发者准备的 Go 对照课程。每一课都从熟悉的概念出发，最终落到可运行代码。</p>
+    <p class="kicker">用已有经验，学一门新语言</p>
+    <h1>从 TypeScript 到 Go，<br>把理解写进代码。</h1>
+    <p class="lesson-deck">值如何传递，错误怎样处理，任务如何并发。<br>从熟悉的语言出发，让每个概念都有运行结果。</p>
+    <div class="journey-actions"><a class="journey-button" href="lessons/0001-hello-world-and-toolchain.html">开始第一课：把 Go 跑起来</a><a href="#path-title">查看学习路线</a></div>
     <p class="meta">
-      <span>4 节基础课程</span>
-      <span>双语代码对照</span>
+      <span><b>6</b> 节课程已开放</span>
+      <span>Go / TypeScript 对照</span>
       <span>练习与即时测验</span>
     </p>
   </div>
-  <div class="syntax-preview compiler-map compiler-map--stack" aria-label="学习路线概览">
-    <p class="compiler-map__label">学习路线</p>
-    <code><strong>01</strong> package main</code>
-    <code><strong>02</strong> value := typed</code>
-    <code><strong>03</strong> for condition { }</code>
-    <code><strong>04</strong> values → slices</code>
-  </div>
+  <figure class="code-study" aria-label="第一课的完整 Go 程序">
+    <div class="code-editor">
+      <div class="editor-heading"><span>hello.go</span><span>Go / 完整程序</span></div>
+      <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+  fmt.Println("Hello, Go!")
+}</code></pre>
+      <div class="editor-caption"><span>一个入口函数</span><span>一次标准输出</span></div>
+    </div>
+    <div class="run-sheet">
+      <p>从这段程序开始</p>
+      <dl><div><dt>运行</dt><dd><code>go run hello.go</code></dd></div><div><dt>输出</dt><dd><samp>Hello, Go!</samp></dd></div></dl>
+    </div>
+    <figcaption>安装 Go 后，将完整程序保存为 <code>hello.go</code>，在文件所在目录运行。<a href="lessons/0001-hello-world-and-toolchain.html">查看第一课说明</a></figcaption>
+  </figure>
   <div class="goal compiler-goal">
-    <strong>学习方式</strong>
-    <span>按编号依次学习。每课包含概念讲解、TypeScript 对照、可运行示例、练习和小测验。</span>
+    <strong>读过之后，再亲手验证。</strong>
+    <span>先预测结果，修改并运行，再用自己的话解释。</span>
   </div>
 </header>
 
-<section class="course-catalog" aria-labelledby="course-list">
-<div class="section-heading">
-  <p>FOUNDATION / 01 / 04</p>
-  <h2 id="course-list">从运行第一个程序开始</h2>
-  <span>四节课从工具链推进到第一组复合类型。</span>
-</div>
-
-<table class="course-table">
-  <thead>
-    <tr>
-      <th>课程</th>
-      <th>主题</th>
-      <th>内容</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>第 1 课</td>
-      <td><a href="lessons/0001-hello-world-and-toolchain.html">把 Go 跑起来</a></td>
-      <td>第一个程序、Go 工具链，以及与 Node.js 工具链的对照</td>
-    </tr>
-    <tr>
-      <td>第 2 课</td>
-      <td><a href="lessons/0002-variables-and-types.html">变量与类型</a></td>
-      <td><code>var</code>、<code>:=</code>、<code>const</code>、类型推断、零值和显式类型转换</td>
-    </tr>
-    <tr>
-      <td>第 3 课</td>
-      <td><a href="lessons/0003-control-flow.html">控制流</a></td>
-      <td><code>if</code> 初始化语句、三种 <code>for</code>、<code>range</code>、不贯穿的 <code>switch</code></td>
-    </tr>
-    <tr>
-      <td>第 4 课</td>
-      <td><a href="lessons/0004-arrays-and-slices.html">数组与 slice</a></td>
-      <td>数组值、共享底层数组、<code>len</code> / <code>cap</code>、<code>append</code> 与独立复制</td>
-    </tr>
-  </tbody>
-</table>
+<section class="course-catalog current-courses" aria-labelledby="course-list">
+<div class="section-heading"><p>当前课程</p><h2 id="course-list">选一节课，<br>开始动手。</h2><span>一个小目标，一次可验证的练习。<br>按顺序学，也能随时回查。</span></div>
+<div class="journey-grid">
+<article class="journey-card lesson-feature"><p class="kicker">第 1 课 / 从这里开始</p><h3><a href="lessons/0001-hello-world-and-toolchain.html">把 Go 跑起来</a></h3><p>分清运行、构建和依赖管理，走通第一个 Go 程序。</p><p><strong>带着问题学：</strong>go run 成功后，如何生成可以再次执行的程序？</p></article>
+<article class="journey-card lesson-recent"><p class="kicker">第 6 课 / 最近加入</p><h3><a href="lessons/0006-pointers.html">指针</a></h3><p>理解取地址、解引用和 nil，判断修改会影响哪个值。</p><p><strong>前置知识：</strong>先完成变量与类型、数组与 slice、map。</p></article>
+</div><a class="journey-link" href="lessons/0000-course-list.html">查看全部 6 节课程与后续安排</a>
 </section>
+<section class="course-catalog" aria-labelledby="path-title"><div class="section-heading"><p>学习路线</p><h2 id="path-title">每个阶段，都有可验证的结果</h2><span>按练习表现推进。后续主题会拆成短课，不预设完成周数。</span></div><ol class="journey-phases">
+<li><span class="journey-number">01</span><div><h3>程序与基础语法</h3><p>工具链、变量与类型、控制流；第 1–3 课已开放。</p></div><p class="journey-evidence"><strong>过关证据</strong>从空目录运行程序，独立完成条件判断和循环统计。</p></li>
+<li><span class="journey-number">02</span><div><h3>数据与值的传递</h3><p>数组、slice、map、指针；第 4–6 课已开放。后续补充字符串、rune 与函数。</p></div><p class="journey-evidence"><strong>过关证据</strong>预测复制和共享后的修改结果，区分缺失键与零值，安全处理 nil。</p></li>
+<li><span class="journey-number">03</span><div><h3>类型、组合与错误</h3><p>计划：struct、方法、接口、显式 error、defer、包与 module、表驱动测试、泛型入门。</p></div><p class="journey-evidence"><strong>过关证据</strong>将统计逻辑拆成可测试的包，通过接口替换依赖，并覆盖失败分支。</p></li>
+<li><span class="journey-number">04</span><div><h3>并发与取消</h3><p>计划：goroutine、channel、select、sync、context；对照 Promise 与事件循环。</p></div><p class="journey-evidence"><strong>过关证据</strong>实现有并发上限且可取消的任务，解释关闭责任，通过竞态检测。</p></li>
+<li><span class="journey-number">05</span><div><h3>标准库与工程实践</h3><p>计划：文件与 io、JSON、net/http、配置、日志、构建；按兴趣阅读开源项目。</p></div><p class="journey-evidence"><strong>过关证据</strong>交付可运行的 CLI 或 HTTP 服务，提供边界测试、启动说明与验收命令。</p></li>
+</ol><a class="journey-link" href="ROADMAP.md">完整教学安排与复习方式</a></section>
+<section class="course-catalog" aria-labelledby="projects-title"><div class="section-heading"><p>工程实践 / 计划中</p><h2 id="projects-title">把练习连接成完整作品</h2><span>先系统学习，再按兴趣选择项目。以下是实践安排，尚未提供项目教程。</span></div><div class="journey-projects"><article id="project-cli" class="journey-card"><p class="kicker">命令行工具</p><h3>目录统计 CLI</h3><p>遍历目录，按扩展名统计文件数量与大小，支持忽略目录和 JSON 输出。</p><p class="journey-evidence">阶段 5 学完文件 I/O 后开始。验收：空目录、无效路径与权限错误测试，退出码和构建说明。</p></article><article id="project-api" class="journey-card"><p class="kicker">HTTP 服务</p><h3>学习书签 API</h3><p>用 net/http 实现书签增删改查、JSON 校验和统一错误响应，再加入持久化。</p><p class="journey-evidence">阶段 5 学完 HTTP 后开始。验收：httptest 接口测试、非法输入、重启后数据保留和 curl 示例。</p></article><article id="project-worker" class="journey-card"><p class="kicker">并发实践</p><h3>站点可用性检查器</h3><p>并发检查一组 URL，限制并发数，支持超时与取消，汇总每个地址的结果。</p><p class="journey-evidence">阶段 4 与 HTTP 客户端基础完成后开始。验收：本地测试服务器覆盖成功、失败、超时与取消，通过竞态检测。</p></article></div><a class="journey-link" href="ROADMAP.md#项目验收">查看项目里程碑与验收要求</a></section>
+<section class="course-catalog resource-section" aria-labelledby="resources-title"><div class="section-heading"><p>参考资料</p><h2 id="resources-title">短课动手，官方文档求证</h2></div><div class="journey-grid">
+<article class="journey-card"><h3><a href="https://go.dev/tour/">A Tour of Go</a></h3><p>按课程主题补充阅读和练习，观察小程序的运行结果。</p></article>
+<article class="journey-card"><h3><a href="https://pkg.go.dev/std">Go 标准库</a></h3><p>写文件、JSON 和 HTTP 代码时，查函数签名、示例与错误约定。</p></article>
+<article class="journey-card"><h3><a href="https://go.dev/ref/spec">Go 语言规范</a></h3><p>遇到赋值、类型或作用域边界时，核对准确的语言规则。</p></article>
+<article class="journey-card"><h3><a href="reference/0001-js-go-quick-reference.html">Go / TypeScript 速查</a></h3><p>回查熟悉写法的对应关系，再返回课时中的完整示例。</p></article>
+</div><a class="journey-link" href="RESOURCES.md">全部学习资料</a></section>
 
 </main>
 
 <footer class="lesson-footer">
-  <p>新的课程会继续按编号添加到此列表。</p>
+  <a class="footer-brand" href="index.html">Go Journey</a><p>用你的代码和解释，决定下一步。</p><a href="lessons/0000-course-list.html">浏览全部课程</a>
 </footer>
 
 </body>

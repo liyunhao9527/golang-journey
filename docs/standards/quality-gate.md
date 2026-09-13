@@ -13,7 +13,7 @@
 
 ## 结构与视觉
 
-- 页面使用正确的 Body variant 和 `TS→GO` 品牌标记。
+- 页面使用正确的 Body variant 和 本地 Go 官方品牌标志。
 - 课时章节或速查卡片间距为 `16px`。
 - Go 代码在上，TypeScript 代码在下。
 - 图标只来自本地 IconPark sprite，且附随可访问文字。

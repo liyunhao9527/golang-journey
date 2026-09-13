@@ -7,9 +7,10 @@
 <meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
 <title>第 1 课:把 Go 跑起来 —— 第一个程序与工具链</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="../assets/vendor/highlight-monokai.css">
+<link rel="icon" type="image/svg+xml" href="../assets/go-logo.svg">
+<link rel="stylesheet" href="../assets/vendor/highlight-one-dark.css">
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/code-blocks.css">
 <script src="../assets/vendor/highlight.min.js" defer></script>
 <script src="../assets/highlight-init.js" defer></script>
 <script src="../assets/quiz.js" defer></script>
@@ -20,7 +21,7 @@
 
 <nav class="course-nav" aria-label="课程导航">
   <a class="course-brand" href="0000-course-list.html">
-    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
+    <img class="course-brand__logo" src="../assets/go-logo.svg" alt="" width="64" height="24">
     <span>Golang Journey</span>
   </a>
   <div class="course-nav__links">
@@ -47,7 +48,7 @@
     <p class="compiler-map__label">本课命令</p>
     <code><strong>go run</strong> hello.go</code>
     <code><strong>go build</strong></code>
-    <code><strong>go fmt</strong> ./...</code>
+    <code><strong>gofmt</strong> -w hello.go</code>
   </div>
   <div class="goal compiler-goal">
     <strong>本课目标</strong>
@@ -69,7 +70,7 @@
       <span>2 道随堂测验</span>
     </div>
     <div class="lesson-progress" aria-label="Go 学习旅程进度：已到第 1 课，共 4 课">
-      <span><strong>01</strong> / 04</span>
+      <span><strong>01</strong> / 06</span>
       <i aria-hidden="true"><b style="width: 25%"></b></i>
       <small>基础语法 · 第 1 课</small>
     </div>
@@ -79,9 +80,9 @@
 <article class="lesson-article">
 
 <section class="lesson-section lesson-section--concept" aria-labelledby="install">
-<h2 id="install">第 0 步:安装 Go</h2>
+<h2 id="install">第 0 步：确认 Go 已安装</h2>
 
-<p>如果机器还没装 Go,macOS 可以用 Homebrew 一条命令安装(只运行一次);其他系统使用本课末尾的官方安装说明:</p>
+<p>先执行下方 go version；看到版本号就跳过安装。尚未安装且已使用 Homebrew 的 macOS 用户，可以运行下面的命令；其他情况使用本课末尾的官方安装说明：</p>
 
 <pre><code class="language-bash">brew install go</code></pre>
 
@@ -131,14 +132,13 @@ func main() {
   </tr>
 </table>
 
-<p>运行它(对照 <code>node hello.js</code>):</p>
+<p>以下命令统一在 golang-journey 仓库根目录执行。运行 Go 示例：</p>
 
-<pre><code class="language-bash">cd demos/01-hello
-go run hello.go
+<pre><code class="language-bash">go run demos/01-hello/hello.go
 # 输出:Hello, Go!</code></pre>
 
 <blockquote>
-  <p><strong>关键差异:</strong><code>go run</code> 会先编译再运行;<code>go build</code> 通常产出<strong>单个可执行文件</strong>,运行机器不需要安装 Go。不过二进制必须匹配目标操作系统和 CPU 架构;需要发布到其他平台时,要为对应平台重新构建。这是和 Node 生态最大的心智差异之一。</p>
+  <p><strong>关键差异:</strong><code>go run</code> 会先编译再运行;<code>go build</code> 通常产出<strong>单个可执行文件</strong>,运行机器不需要安装 Go。不过二进制必须匹配目标操作系统和 CPU 架构;需要发布到其他平台时,要为对应平台重新构建。运行可执行文件时不需要再调用 go run。</p>
 </blockquote>
 
 </section>
@@ -146,7 +146,7 @@ go run hello.go
 <section class="lesson-section lesson-section--concept" aria-labelledby="comparison">
 <h2 id="comparison">对照代码:同一个程序,两种语言</h2>
 
-<p>上面讲的是"Go 怎么写",现在把两个版本并排放——这是本课程的核心学习方式,<strong>每个概念都给你一份可运行的双语对照</strong>:</p>
+<p>下面先放 Go，再放 TypeScript，比较两种语言的入口写法：</p>
 
 <div class="compare">
   <div>
@@ -170,15 +170,15 @@ console.log("Hello, Go!");</code></pre>
   </div>
 </div>
 
-<p>两个文件输出完全一样,运行方式对照:</p>
+<p>两个文件输出相同。以下两条命令都从仓库根目录执行：</p>
 
 <pre><code class="language-bash"># Go:先编译再运行
-cd demos/01-hello &amp;&amp; go run hello.go
+go run demos/01-hello/hello.go
 
-# TS:直接解释执行
-cd demos/01-hello &amp;&amp; node hello.ts</code></pre>
+# TS：Node 执行此处不含类型标注的脚本
+node demos/01-hello/hello.ts</code></pre>
 
-<p>注意 <code>hello.ts</code> 里<strong>没有</strong> <code>package</code>、<strong>没有</strong> <code>import</code>、<strong>没有</strong> <code>func main()</code>——TS 的入口是隐式的,Go 的一切都是显式的。这就是第一课的对照结论。</p>
+<p>本例 Go 从 main 包的 main 函数开始执行，TS 脚本执行顶层语句。两种程序都能打印同一行文字，但程序结构和运行工具不同。</p>
 
 </section>
 
@@ -188,8 +188,8 @@ cd demos/01-hello &amp;&amp; node hello.ts</code></pre>
 <table>
   <tr><th>做的事</th><th>JS/TS</th><th>Go</th></tr>
   <tr><td>运行脚本</td><td><code>node hello.js</code></td><td><code>go run hello.go</code></td></tr>
-  <tr><td>编译 / 类型检查</td><td><code>tsc --noEmit</code></td><td><code>go build</code></td></tr>
-  <tr><td>格式化</td><td><code>prettier --write</code></td><td><code>go fmt</code>(官方工具,社区铁律)</td></tr>
+  <tr><td>编译 / 类型检查</td><td><code>tsc --noEmit</code></td><td><code>go build hello.go</code>（生成文件）</td></tr>
+  <tr><td>格式化</td><td><code>prettier --write</code></td><td><code>gofmt -w hello.go</code>（格式化文件）</td></tr>
   <tr><td>初始化项目</td><td><code>npm init</code></td><td><code>go mod init &lt;module名&gt;</code></td></tr>
   <tr><td>调整模块依赖版本</td><td><code>npm install &lt;pkg&gt;</code></td><td><code>go get &lt;module&gt;@&lt;version&gt;</code></td></tr>
   <tr><td>安装命令行工具</td><td><code>npm install -g &lt;pkg&gt;</code></td><td><code>go install &lt;pkg&gt;@&lt;version&gt;</code></td></tr>
@@ -198,11 +198,8 @@ cd demos/01-hello &amp;&amp; node hello.ts</code></pre>
   <tr><td>运行所需</td><td>Node.js + 应用代码/依赖</td><td>通常只需目标平台的可执行文件</td></tr>
 </table>
 
-<p>两个值得记住的要点:</p>
-<ul>
-  <li><strong><code>go fmt</code> 不是插件:</strong>它是官方工具,所有 Go 代码格式统一,团队里不存在"格式之争"。</li>
-  <li><strong>测试是内置的:</strong>不需要选型 vitest 还是 jest——<code>go test</code> 就是标准。</li>
-</ul>
+<h3>亲手区分 run、build 和格式化</h3><p>继续在仓库根目录操作。先构建；成功后此命令不打印 Hello，也不运行程序：</p><pre><code class="language-bash">go build -o demos/01-hello/hello-demo demos/01-hello/hello.go</code></pre><p>macOS / Linux 直接运行生成的文件：</p><pre><code class="language-bash">./demos/01-hello/hello-demo</code></pre><p>Windows PowerShell 构建时把输出名改为 hello-demo.exe，再运行：</p><pre><code class="language-bash">go build -o demos/01-hello/hello-demo.exe demos/01-hello/hello.go
+.\demos\01-hello\hello-demo.exe</code></pre><p>程序输出 Hello, Go!。修改源码后，直接运行旧文件仍是旧结果；重新 build 才会更新文件。go run 则构建后直接运行临时产物，不会更新这里指定的 hello-demo。</p><p>格式化只调整源码排版，不执行程序。本仓库示例按单文件运行，无需先初始化模块：</p><pre><code class="language-bash">gofmt -w demos/01-hello/hello.go</code></pre><p>go fmt 按包调用 gofmt；处理本课单个文件时，直接用 gofmt 最清楚。测试、依赖和模块命令先作为速查，后续课程再使用。</p>
 
 </section>
 
@@ -216,8 +213,7 @@ cd demos/01-hello &amp;&amp; node hello.ts</code></pre>
   <li>再打印一行你最喜欢的编程语言。提示:<code>fmt.Println</code> 一次只打印一行,但可以在一个调用里传多个参数:<code>fmt.Println("A", "B")</code> 会输出 <code>A B</code></li>
 </ol>
 
-<pre><code class="language-bash">cd demos/01-hello
-go run hello.go</code></pre>
+<pre><code class="language-bash">go run demos/01-hello/hello.go</code></pre>
 
 <details>
   <summary>参考代码与期望输出(先自己写完再看)</summary>

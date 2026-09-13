@@ -1,0 +1,150 @@
+/* Decorative gutters leave the underlying source text intact. */
+pre code.code-with-lines {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  white-space: pre;
+  tab-size: 2;
+}
+.code-line {
+  display: inline-block;
+  position: relative;
+  min-width: 100%;
+  padding-left: var(--code-gutter);
+  vertical-align: top;
+  min-height: 1lh;
+}
+.code-line-number {
+  position: absolute;
+  left: 0;
+  width: calc(var(--code-gutter) - 16px);
+  padding-right: 12px;
+  border-right: 1px solid #3e4451;
+  color: #818896;
+  text-align: right;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+.code-line-number::before { content: attr(data-line-number); }
+.code-indent-guides {
+  position: absolute;
+  left: var(--code-gutter);
+  top: 0;
+  bottom: 0;
+  width: var(--indent-width);
+  background: repeating-linear-gradient(to right, #4b5263 0 1px, transparent 1px 2ch);
+  opacity: 1;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+@media print {
+  .code-line-number { color: #818896; }
+  .code-indent-guides { background: none; }
+}
+
+/* Independent code panels follow the Rust reader's spacing and hierarchy. */
+.compiler-lesson .compare {
+  gap: 28px;
+  margin-block: 24px 32px;
+  box-shadow: none;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+.compiler-lesson .compare > div:not(.translation-rail) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+  min-width: 0;
+}
+.compiler-lesson .compare .lang-label,
+.compiler-lesson .compare > div:first-child .lang-label,
+.compiler-lesson .compare > div:last-child .lang-label {
+  display: block;
+  margin: 0 0 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: normal;
+  text-transform: none;
+}
+.compiler-lesson .compare > .translation-rail {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  box-shadow: none;
+  gap: 14px 24px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.compiler-lesson .code-panel {
+  min-width: 0;
+  margin: 20px 0;
+  background: #282c34;
+  border: 1px solid #3e4451;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.compiler-lesson .compare .code-panel { margin: 0; }
+.code-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 8px 0 18px;
+  border-bottom: 1px solid #3e4451;
+  color: #abb2bf;
+  font: 400 12px/1.6 'Cascadia Code', Consolas, monospace;
+}
+.code-toolbar button {
+  min-width: 62px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: #8bc4ce;
+  font: inherit;
+  cursor: pointer;
+}
+.code-toolbar button:hover { background: #3e4451; }
+.code-toolbar button:active { background: #4b5263; }
+.code-toolbar button:disabled { cursor: wait; }
+.code-toolbar button:focus-visible { outline: 2px solid #8bc4ce; outline-offset: -3px; }
+.compiler-lesson .code-panel pre {
+  margin: 0;
+  padding: 20px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: #282c34;
+  color: #abb2bf;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.compiler-lesson .code-panel pre code {
+  font-family: 'Cascadia Code', Consolas, monospace;
+  font-size: inherit;
+  font-weight: 400;
+}
+.code-copy-feedback { display: block; padding: 0 18px 12px; color: #abb2bf; font: 12px/1.8 sans-serif; }
+.code-copy-feedback:empty { padding: 0; }
+@media (max-width: 767px) {
+  .compiler-lesson .code-panel pre { padding: 16px; font-size: 13px; }
+  .compiler-lesson .compare { gap: 24px; }
+  .compiler-lesson .compare > .translation-rail { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  .code-toolbar button, .code-copy-feedback { display: none; }
+  .code-panel { break-inside: avoid; }
+}

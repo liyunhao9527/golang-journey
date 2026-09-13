@@ -7,9 +7,10 @@
 <meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
 <title>第 5 课：map | 键值与词频统计</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="../assets/vendor/highlight-monokai.css">
+<link rel="icon" type="image/svg+xml" href="../assets/go-logo.svg">
+<link rel="stylesheet" href="../assets/vendor/highlight-one-dark.css">
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/code-blocks.css">
 <script src="../assets/vendor/highlight.min.js" defer></script>
 <script src="../assets/highlight-init.js" defer></script>
 <script src="../assets/quiz.js" defer></script>
@@ -20,7 +21,7 @@
 
 <nav class="course-nav" aria-label="课程导航">
   <a class="course-brand" href="0000-course-list.html">
-    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
+    <img class="course-brand__logo" src="../assets/go-logo.svg" alt="" width="64" height="24">
     <span>Golang Journey</span>
   </a>
   <div class="course-nav__links">
@@ -56,7 +57,7 @@ scores.delete(&quot;TS&quot;);
 console.log(scores.size);</code></pre></div></div><p>Go 输出：</p><pre><code class="language-plaintext">0 0 2
 0 true
 0 false
-1</code></pre><p>TS 前三行分别为 <code>0 undefined 2</code>、<code>0 true</code>、<code>undefined false</code>，最后一行为 <code>1</code>。<code>?? 0</code> 在左侧为 null 或 undefined 时使用 0。</p><p><code>value, ok := scores[key]</code> 一次声明两个变量；ok 是布尔值，不是错误。读取缺失键不会新增条目。<code>delete(m, key)</code> 删除缺失键也安全，但与 TS 的 delete 方法不同，它不返回布尔值。参见<a href="https://go.dev/ref/spec#Index_expressions">索引规范</a>和<a href="https://go.dev/ref/spec#Deletion_of_map_elements">删除规范</a>。</p></section><section class="lesson-section lesson-section--concept" aria-labelledby="nil"><h2 id="nil">nil map：可读，写之前先初始化</h2><p>回忆：nil slice 可以接住 append 的结果。map 的规则不同：<code>var counts map[string]int</code> 只得到 nil map；写入前用 <code>make</code> 或 map 字面量创建可写的 map。TypeScript 中 <code>new Map()</code> 已创建可写容器。</p><p>完整程序，保存为 main.go，在所在目录运行 go run main.go：</p><pre><code class="language-go">package main
+1</code></pre><p>TS 前三行分别为 <code>0 undefined 2</code>、<code>0 true</code>、<code>undefined false</code>，最后一行为 <code>1</code>。<code>?? 0</code> 在左侧为 null 或 undefined 时使用 0。</p><p><code>value, ok := scores[key]</code> 一次声明两个变量；ok 是布尔值，不是错误。读取缺失键不会新增条目。例如 Rust 的读取结果是 0、ok 是 false；Go 虽然也存了 0，但 ok 是 true，说明键确实存在。<code>delete(m, key)</code> 删除缺失键也安全，但与 TS 的 delete 方法不同，它不返回布尔值。参见<a href="https://go.dev/ref/spec#Index_expressions">索引规范</a>和<a href="https://go.dev/ref/spec#Deletion_of_map_elements">删除规范</a>。</p></section><section class="lesson-section lesson-section--concept" aria-labelledby="nil"><h2 id="nil">nil map：可读，写之前先初始化</h2><p>回忆：nil slice 可以接住 append 的结果。map 的规则不同：<code>var counts map[string]int</code> 只得到 nil map；写入前用 <code>make</code> 或 map 字面量创建可写的 map。TypeScript 中 <code>new Map()</code> 已创建可写容器。</p><p>完整程序，保存为 main.go，在所在目录运行 go run main.go：</p><pre><code class="language-go">package main
 
 import &quot;fmt&quot;
 

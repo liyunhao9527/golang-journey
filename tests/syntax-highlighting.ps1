@@ -6,7 +6,8 @@ $htmlFiles = @("lessons", "reference") |
   ForEach-Object { Get-ChildItem (Join-Path $repoRoot $_) -Filter "*.html" }
 
 $failures = [System.Collections.Generic.List[string]]::new()
-$themeHref = '<link rel="stylesheet" href="../assets/vendor/highlight-monokai.css">'
+$themeHref = '<link rel="stylesheet" href="../assets/vendor/highlight-one-dark.css">'
+$codeBlocksHref = '<link rel="stylesheet" href="../assets/code-blocks.css">'
 $librarySrc = '<script src="../assets/vendor/highlight.min.js" defer></script>'
 $initializerSrc = '<script src="../assets/highlight-init.js" defer></script>'
 
@@ -15,6 +16,9 @@ foreach ($htmlFile in $htmlFiles) {
 
   if (-not $html.Contains($themeHref)) {
     $failures.Add("$($htmlFile.Name): missing local highlight theme")
+  }
+  if (-not $html.Contains($codeBlocksHref)) {
+    $failures.Add("$($htmlFile.Name): missing code gutter styles")
   }
   if (-not $html.Contains($librarySrc)) {
     $failures.Add("$($htmlFile.Name): missing local highlight library")
@@ -32,7 +36,8 @@ foreach ($htmlFile in $htmlFiles) {
 
 $requiredAssets = @(
   (Join-Path $repoRoot "assets/vendor/highlight.min.js"),
-  (Join-Path $repoRoot "assets/vendor/highlight-monokai.css"),
+  (Join-Path $repoRoot "assets/vendor/highlight-one-dark.css"),
+  (Join-Path $repoRoot "assets/code-blocks.css"),
   (Join-Path $repoRoot "assets/highlight-init.js")
 )
 

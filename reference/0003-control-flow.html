@@ -7,9 +7,10 @@
 <meta name="theme-color" content="#e7eef1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0c171d" media="(prefers-color-scheme: dark)">
 <title>速查:控制流(if / for / range / switch)</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="../assets/vendor/highlight-monokai.css">
+<link rel="icon" type="image/svg+xml" href="../assets/go-logo.svg">
+<link rel="stylesheet" href="../assets/vendor/highlight-one-dark.css">
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/code-blocks.css">
 <script src="../assets/vendor/highlight.min.js" defer></script>
 <script src="../assets/highlight-init.js" defer></script>
 </head>
@@ -19,7 +20,7 @@
 
 <nav class="course-nav" aria-label="课程导航">
   <a class="course-brand" href="../lessons/0000-course-list.html">
-    <span class="course-brand__mark" aria-hidden="true">TS→GO</span>
+    <img class="course-brand__logo" src="../assets/go-logo.svg" alt="" width="64" height="24">
     <span>Golang Journey</span>
   </a>
   <div class="course-nav__links">
@@ -35,7 +36,7 @@
 <header class="lesson-header">
   <div class="lesson-header__copy">
     <p class="kicker">速查 03 / 控制流</p>
-    <h1>控制流</h1>
+    <h1>控制流</h1><p>速查中的局部 Go 片段放在已导入 fmt 的 main 函数中；表格里的声明各自独立。完整运行步骤见<a href="../lessons/0003-control-flow.html">第 3 课</a>。</p>
     <p class="lesson-deck">if / for / range / switch，一页找回所有分支与循环写法</p>
     <p class="meta"><span>第 3 课范围</span><span>TypeScript 对照</span><a href="../lessons/0003-control-flow.html">回到课程<svg class="ip-icon" aria-hidden="true"><use href="../assets/icons/icon-park.svg#ip-book-open"></use></svg></a></p>
   </div>
@@ -93,10 +94,10 @@ if divisor != 0 &amp;&amp; 10/divisor &gt; 1 {
 <h2 id="if-init">if 带初始化:作用域最小化</h2>
 
 <pre><code class="language-go">// val 只在 if/else 块内可见,出块即消失
-if val := compute(); val &gt; 100 {
-  use(val)
+if val := len("Go"); val &gt; 100 {
+  fmt.Println(val)
 } else {
-  use(val * 2) // else 里也能用
+  fmt.Println(val * 2) // else 里也能用
 }
 // val 在这里不存在(编译错误)</code></pre>
 
@@ -105,7 +106,7 @@ if val := compute(); val &gt; 100 {
 <section class="reference-section" aria-labelledby="for-range">
 <h2 id="for-range">for 的三种形态 + range</h2>
 
-<pre><code class="language-go">for i := 0; i &lt; 5; i++ {}  // 三段式
+<p>以下为语法示意，不可直接运行：n 是计数变量，slice 和 map 代表待遍历的集合；实际循环需要更新条件并使用所声明的变量，见课程完整示例。</p><pre><code class="language-go">for i := 0; i &lt; 5; i++ {}  // 三段式
 for n &lt; 100 {}            // = while
 for {}                    // = while(true)
 
@@ -121,7 +122,7 @@ for k, v := range map {}     // 键 + 值(顺序未指定,不要依赖)</code></
 <section class="reference-section" aria-labelledby="unicode-range">
 <h2 id="unicode-range">range 遍历字符串:按 rune,索引按字节</h2>
 
-<pre><code class="language-go">for i, c := range "go语言" {}
+<pre><code class="language-go">for i, c := range "go语言" { fmt.Println(i, c) }
 // 4 次迭代:c 依次是 g、o、语、言(类型 rune)
 // i 依次是 0、1、2、5 —— 汉字占 3 字节,索引跳的是字节</code></pre>
 
@@ -136,14 +137,17 @@ for k, v := range map {}     // 键 + 值(顺序未指定,不要依赖)</code></
   <li><strong>无条件 switch</strong>(<code>switch {}</code> + <code>case cond:</code>)= 整齐的 if-else 链,Go 招牌写法。</li>
 </ol>
 
-<pre><code class="language-go">switch {                // 无条件:按顺序找第一个为真的 case
+<pre><code class="language-go">score := 87
+grade := ""
+switch {                // 无条件:按顺序找第一个为真的 case
 case score &gt;= 90:
   grade = "A"
 case score &gt;= 80:
   grade = "B"
 default:
   grade = "C"
-}</code></pre>
+}
+fmt.Println(grade)</code></pre>
 
 </section>
 

@@ -10,7 +10,7 @@
 - 跳到主内容的 skip link；
 - `.course-nav`、一个 `<main>`、一个 H1 和页脚；
 - `body.lesson-page.compiler-lesson`；
-- 品牌标记 `TS→GO`。
+- 本地 Go 官方品牌标志 `assets/go-logo.svg`。
 
 课程、速查和资源路径当前都只有一层目录，因此共享资源使用 `../assets/...`。
 
@@ -26,9 +26,13 @@ Body：
 
 1. 课程导航；
 2. `.course-index-shell`；
-3. `.lesson-header`，包含标题、导语、学习路线和 `.compiler-goal`；
-4. `.course-catalog`，包含课程列表；
+3. `.lesson-header`，包含标题、导语、第一课入口、完整代码示例和 `.compiler-goal`；
+4. `.course-catalog`，依次包含当前课程、阶段路线、项目实践与参考资料；
 5. 页脚。
+
+首页与目录共享 `assets/home.css`；目录 Header 使用课程数量与路线入口替代代码示例。
+
+完整课程表保留在 `lessons/0000-course-list.html`。首页与目录的已开放数量须一致，计划课程明确标记待更新，阶段安排详见 `ROADMAP.md`。
 
 首页的工作是让读者选择课程。375 × 812 下至少露出第一课标题。
 

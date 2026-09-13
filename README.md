@@ -10,7 +10,7 @@
 
 ## 在线课程
 
-网站入口是根目录的 [`index.html`](index.html)。本地预览时，在仓库根目录运行：
+网站入口是根目录的 [`index.html`](index.html)，包含当前课程、阶段路线、项目实践与参考资料。完整列表见[课程目录](lessons/0000-course-list.html)，后续教学安排见[学习路线](ROADMAP.md)。本地预览时，在仓库根目录运行：
 
 ```powershell
 python -m http.server 4173

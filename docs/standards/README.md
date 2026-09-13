@@ -24,8 +24,10 @@
 
 ## 实现入口
 
-- 共享样式：`assets/style.css`
+- 课时与速查共享样式：`assets/style.css`
+- 首页与课程目录共享样式：`assets/home.css`
 - 测验交互：`assets/quiz.js`
+- 行号与缩进参考线：`assets/code-blocks.css`，由高亮初始化脚本增强
 - 语法高亮：`assets/highlight-init.js` 与 `assets/vendor/`
 - IconPark 图标：`assets/icons/icon-park.svg`
 - 课程页面：`lessons/`
